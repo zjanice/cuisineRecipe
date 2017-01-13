@@ -270,12 +270,17 @@ function draw(data) {
    rectIngredient.exit().remove();
 
 //---------------------------Button Group Switch View --------------------------
-  d3.select('.chordChart')
-    .on('click',function(d){
-      // $('.line').css('opacity',0);
-      // $('.rectCuisine').css('opacity',0)
-      // $('.rectIngredient').css('opacity',0);
+  d3.select('.cuisineIngredientIChartBtn')
+    .on('click',function(){
+      $('.chordChart').css('visibility','hidden');
+      $('.ribbon').css('visibility','hidden');
+      $('.line').css('visibility','visible');
+      $('.rectCuisine').css('visibility','visible')
+      $('.rectIngredient').css('visibility','visible');
+    });
 
+  d3.select('.chordChartBtn')
+    .on('click',function(d){
       $('.line').css('visibility','hidden');
       $('.rectCuisine').css('visibility','hidden')
       $('.rectIngredient').css('visibility','hidden');
@@ -292,7 +297,7 @@ function draw(data) {
         .datum(chord(matrix));
 
       var group = g.append("g")
-        .attr("class", "groups")
+        .attr("class", "chordChart groups")
         .selectAll("g")
         .data(function(chords) {
           console.log(chords);
