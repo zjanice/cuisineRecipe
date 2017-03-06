@@ -292,33 +292,33 @@ function draw(data) {
       //   });
 
 //---------------------------Draw outer chords ---------------------------------
-      var g = plot.append("g")
-        .attr("transform", "translate(" + w / 2 + "," + h / 2 + ")")
+      var g = plot.append('g')
+        .attr('transform', 'translate('+ w / 2 + ',' + h / 2 + ')')
         .datum(chord(matrix));
 
-      var group = g.append("g")
-        .attr("class", "chordChart groups")
-        .selectAll("g")
+      var group = g.append('g')
+        .attr('class', 'chordChart groups')
+        .selectAll('g')
         .data(function(chords) {
           console.log(chords);
           return chords.groups; })
-        .enter().append("g");
+        .enter().append('g');
 
-      group.append("path")
-        .style("fill", function(d){return colorScale20c(d.index)})
-        .style("stroke", function(d) { return d3.rgb(colorScale20c(d.index)).darker(); })
-        .attr("d", arc);
+      group.append('path')
+        .style('fill', function(d){return colorScale20c(d.index)})
+        .style('stroke', function(d) { return d3.rgb(colorScale20c(d.index)).darker(); })
+        .attr('d', arc);
 
-      group.append("text")
+      group.append('text')
         .each(function(d) { d.angle = ((d.startAngle + d.endAngle) / 2);})
-        .attr("dy", ".35em")
-        .attr("class", "chordTitle")
-        .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
-        .attr("transform", function(d,i) {
+        .attr('dy', ".35em")
+        .attr('class', "chordTitle")
+        .attr('text-anchor', function(d) { return d.angle > Math.PI ? "end" : null; })
+        .attr('transform', function(d,i) {
           var c = arc.centroid(d);
-          return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
-          + "translate(" + (innerRadius + 55) + ")"
-          + (d.angle > Math.PI ? "rotate(180)" : "")
+          return 'rotate(' + (d.angle * 180 / Math.PI - 90) + ')'
+          + 'translate(' + (innerRadius + 55) + ')'
+          + (d.angle > Math.PI ? "rotate(180)" : '')
         })
         .text(function(d,i) {return filteredIngredients[i].name; })
         .on('mouseenter',function(d){
@@ -341,17 +341,17 @@ function draw(data) {
           });
         });
 
-      g.append("g")
-        .selectAll("path")
+      g.append('g')
+        .selectAll('path')
         .data(function(chords) {return chords; })
-        .enter().append("path")
+        .enter().append('path')
         .attr('class',function(d){ // append different classes to chords/ribbons
           return 'ribbon ' + d.source.index + 'Ribbon ' + d.target.index + 'Ribbon';
         })
-        .attr("d", ribbon)
-        .style("fill", function(d) {return colorScale20c(d.target.index); })
+        .attr('d', ribbon)
+        .style('fill', function(d) {return colorScale20c(d.target.index); })
         .style('opacity',function(d){return scaleOpacity(d.target.value);})
-        .style("stroke", function(d) {return d3.rgb(colorScale20c(d.target.index)).darker(); });
+        .style('stroke', function(d) {return d3.rgb(colorScale20c(d.target.index)).darker(); });
 
 
     });
