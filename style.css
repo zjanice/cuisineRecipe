@@ -9,6 +9,10 @@ h1 {
     min-height:800px;
 }
 
+.plot{
+	min-height:500px;
+}
+ 
 .container{
     width: 95%;
     margin-left: 4%;

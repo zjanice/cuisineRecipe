@@ -1,9 +1,10 @@
 console.log('Cuisine Recipe project');
 
 var m = {t:50,r:50,b:50,l:50},
-w = document.getElementById('canvas').clientWidth,
-h = document.getElementById('canvas').clientHeight;
-
+w = document.getElementById('plot1').clientWidth - m.l - m.r,
+h = document.getElementById('plot1').clientHeight - m.t - m.b;
+// w = document.getElementById('canvas').clientWidth,
+// h = document.getElementById('canvas').clientHeight;
 var pairedData = [];
 
 var allIngredients = {};
@@ -11,12 +12,22 @@ var allCuisines = [];
 var rectIngredientWidth = 5, rectIngredientHeight = 5;
 var rectCuisineWidth = 5, rectCuisineHeight = 3;
 
-var plot = d3.select('.canvas')
-  .append('svg')
-  .attr('width', w + m.l + m.r)
-  .attr('height', 1.1*h + m.t + m.b)
-  .append('g')
-  .attr('transform','translate('+ m.l+','+ m.t+')');
+var plots = d3.selectAll('.plot')
+	.append('svg')
+	.attr('width', w + m.l + m.r)
+	.attr('height', h + m.t + m.b)
+	.append('g')
+	.attr('class','canvas')
+	.attr('transform','translate('+m.l+','+m.t+')');
+var plot1 = plots.filter(function(d,i){ return i===0;}),
+    plot2 = plots.filter(function(d,i){ return i===1;});
+
+// var plot = d3.select('.canvas')
+//   .append('svg')
+//   .attr('width', w + m.l + m.r)
+//   .attr('height', 1.1*h + m.t + m.b)
+//   .append('g')
+//   .attr('transform','translate('+ m.l+','+ m.t+')');
 
 var scaleXCuisine = d3.scaleLinear()
   .domain([0,3])
@@ -164,7 +175,7 @@ function draw(data) {
   // console.log(pairedData);
 
 //------------------------DRAW ingredients--------------------------------------
-  var rectIngredient = plot.selectAll('rect').data(filteredIngredients);
+  var rectIngredient = plot1.selectAll('rect').data(filteredIngredients);
 
   //ENTER
   var rectIngredientEnter = rectIngredient
@@ -198,7 +209,7 @@ function draw(data) {
      });
 
 //---------------------------DRAW cuisine---------------------------------------
-  var rectCuisine = plot.selectAll('.rectCuisine').data(filteredCuisines);
+  var rectCuisine = plot1.selectAll('.rectCuisine').data(filteredCuisines);
 
   var rectCuisineEnter = rectCuisine
     .enter()
@@ -239,7 +250,7 @@ function draw(data) {
 
 
   //---------------------------APPEND LINE--------------------------------------
-  plot.selectAll('.line')
+  plot1.selectAll('.line')
     .data(pairedData)
     .enter()
     .append('g')
@@ -292,7 +303,7 @@ function draw(data) {
       //   });
 
 //---------------------------Draw outer chords ---------------------------------
-      var g = plot.append('g')
+      var g = plot1.append('g')
         .attr('transform', 'translate('+ w / 2 + ',' + h / 2 + ')')
         .datum(chord(matrix));
 
