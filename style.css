@@ -10,9 +10,13 @@ h1 {
 }
 
 .plot{
-	min-height:500px;
+	min-height:19000px;
 }
- 
+
+.node .outer{
+   opacity:.3;
+}
+
 .container{
     width: 95%;
     margin-left: 4%;

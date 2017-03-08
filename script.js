@@ -12,6 +12,8 @@ var allCuisines = [];
 var rectIngredientWidth = 5, rectIngredientHeight = 5;
 var rectCuisineWidth = 5, rectCuisineHeight = 3;
 
+var cellSize = 24, col_number= 26, row_number= 350;
+
 var plots = d3.selectAll('.plot')
 	.append('svg')
 	.attr('width', w + m.l + m.r)
@@ -20,7 +22,8 @@ var plots = d3.selectAll('.plot')
 	.attr('class','canvas')
 	.attr('transform','translate('+m.l+','+m.t+')');
 var plot1 = plots.filter(function(d,i){ return i===0;}),
-    plot2 = plots.filter(function(d,i){ return i===1;});
+    plot2 = plots.filter(function(d,i){ return i===1;}),
+    plot3 = plots.filter(function(d,i){ return i===2;});
 
 // var plot = d3.select('.canvas')
 //   .append('svg')
@@ -43,7 +46,9 @@ var scaleLineWidth = d3.scaleLinear()
 
 var scaleColor = d3.scaleOrdinal()
   .range(['#fd6b5a','#03afeb','orange']);
-
+var scaleColorMatrix = d3.scaleLinear()
+  .domain([0,100])
+  .range(["white","#4169e1"]);
 var colorScale20c = d3.scaleOrdinal().range(d3.schemeCategory20c);
 
 var scaleOpacity = d3.scaleLinear()
@@ -80,11 +85,12 @@ d3.queue()
 function dataloaded(err, data){
   // console.log(data);
   var datasets = data;
-  // console.log(allIngredients); // 350 ingredients in total
+  console.log(allIngredients); // 350 ingredients in total
   // console.log(data.length); //13408 rows of record
   draw(data);
   // console.log(allCuisines); // 26 cuisines
 }
+
 function getIngredientIndex(filteredIngredients,ingredientName) {
   var index;
   for (var i = 0; i < filteredIngredients.length; i++) {
@@ -128,17 +134,19 @@ function prepareMatrix(data,filteredIngredients) {
 function draw(data) {
   //-----------------------------Filter Data------------------------------------
   var filteredCuisines = allCuisines.filter(function(d){
-    return d == 'French' || d == 'Italian' ||  d == 'Asian';
+    // return d == 'French' || d == 'Italian' ||  d == 'Asian';
+    return true;
   });
   // console.log('filteredCuisines: '+filteredCuisines);
   var filteredData = data.filter(function(d){
-    return d.cuisine == 'French'|| d == 'Italian' ||  d == 'Asian';
+    return true;
+    // return d.cuisine == 'French'|| d == 'Italian' ||  d == 'Asian';
   });
   // console.log('filteredData: '+filteredData.length); // 136
 
   var filteredIngredients = Object.values(allIngredients);
   filteredIngredients = filteredIngredients.filter(function(d){
-    return d.count > 1000;
+    return d.count > 0; //1000
   });
 
   for (var i = 0; i < filteredIngredients.length; i++) {
@@ -391,7 +399,104 @@ function draw(data) {
   //    tooltip.transition().style('opacity',0);
   //    d3.select(this).style('stroke-width','0px');
   //  });
-}
+  // console.log(allCuisines);
+
+  //-----------------------------draw matrix chart -----------------------------
+  plot3.selectAll('.rowLabelg')
+    .data(Object.keys(allIngredients))
+    .enter()
+    .append('text')
+    .attr('class','rowLabelg')
+    .text(function(d){return d;})
+    .style("text-anchor", "left")
+    .attr('x', 0)
+    .attr('y', function(d,i){return i * cellSize  + 25;})
+    // .attr("transform", "translate(-6," + cellSize / 1.5 + ")")
+    .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
+    .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
+
+  plot3.selectAll('.colLabelg')
+    .data(filteredCuisines)
+    .enter()
+    .append('text')
+    .attr('class','colLabelg')
+    .text(function(d){return d;})
+    // .style("text-anchor", "right")
+    .attr('x', 0)
+    .attr('y', function(d,i){return i * cellSize;})
+    // .attr("transform", "translate(-6," + cellSize /2 + ")")
+    .attr("transform", "translate("+cellSize * 6.8+ ",-6) rotate (-90)")
+    .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
+    .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
+
+  plot3.selectAll(".cellg")
+    .data(pairedData)
+    // .data(pairedData,function(d){return d.row+":"+d.col;})
+    .enter()
+    .append("rect")
+    .attr('class','cellg')
+    .attr('transform','translate(150,0)')
+    .attr("x", function(d,i) {
+      // console.log(d);
+      var colId = Math.floor(i/row_number); //d.ingredient.index = d.id
+      return colId * cellSize;
+    })
+    .attr("y", function(d,i) {
+      var rowId = i%row_number;
+      return rowId * cellSize;
+    })
+    // .attr("class", function(d){return "cell cell-border cr"+(d.row-1)+" cc"+(d.col-1);})
+    .attr("width", cellSize *0.75)
+    .attr("height",cellSize *0.75)
+    .style("fill", function(d) {
+      // console.log(d.ingredient);
+      return scaleColorMatrix(d.count);})
+    .on('mouseenter',function(d){
+      console.log(d);
+      var tooltip = d3.select('.custom-tooltip');
+      tooltip.selectAll('.value')
+        .html('hi');
+      tooltip.transition().style('opacity',1);
+      // d3.select(this).style('fill','red');
+      plot3.selectAll('.rowLabelg')
+        .style('opacity', 0.2);
+      plot3.selectAll('.colLabelg')
+        .style('opacity', 0.2);
+      plot3.selectAll('.cellg')
+        .style('opacity', 0.2);
+
+      d3.select(this)
+        .style('opacity', 1);
+      plot3.selectAll('.cellg').filter(function(e){
+        var colId = Math.floor(d.id/row_number);
+        var rowId = d.id%row_number;
+        var cellColId = Math.floor(e.id/row_number);
+        var cellRowId = e.id%row_number;
+
+        return colId == cellColId || rowId == cellRowId;
+        // console.log(colId,rowId);
+      }).style('opacity',1);
+    })
+    .on('mousemove',function(d){
+         var tooltip = d3.select('.custom-tooltip');
+         var xy = d3.mouse(d3.select('.container').node());
+         tooltip
+            .style('left',xy[0]+10+'px')
+            .style('top',xy[1]+10+'px');
+    })
+    .on('mouseleave',function(d){
+         var tooltip = d3.select('.custom-tooltip');
+         tooltip.transition().style('opacity',0);
+
+         plot3.selectAll('.rowLabelg')
+           .style('opacity', 1);
+         plot3.selectAll('.colLabelg')
+           .style('opacity', 1);
+         plot3.selectAll('.cellg')
+           .style('opacity', 1);
+
+    });
+} // end of function draw
 
 function parse(d){
   var entry = {
