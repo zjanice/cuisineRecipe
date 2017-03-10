@@ -47,7 +47,7 @@ var scaleLineWidth = d3.scaleLinear()
 var scaleColor = d3.scaleOrdinal()
   .range(['#fd6b5a','#03afeb','orange']);
 var scaleColorMatrix = d3.scaleLinear()
-  .domain([0,100])
+  .domain([0,1])
   .range(["white","#4169e1"]);
 var colorScale20c = d3.scaleOrdinal().range(d3.schemeCategory20c);
 
@@ -127,7 +127,7 @@ function prepareMatrix(data,filteredIngredients) {
     }
   }
   row_number = filteredIngredients.length;
-  console.log(filteredIngredients);
+  // console.log(filteredIngredients);
   // console.log(filteredIngredients.indexOf(data[0].ingredients[2]));
 }
 
@@ -176,7 +176,7 @@ function draw(data) {
 
   for (var i = 0; i < nestedCuisines.length; i++) {
     for (var j = 0; j < nestedCuisines[i].values.length; j++) {
-      console.log(nestedCuisines[i].values[j].key);
+      console.log(nestedCuisines[i].values[j].key, nestedCuisines[i].values[j].values.length); // how many dishes each cuisine
     }
   }
   console.log(nestedCuisines);
@@ -196,15 +196,15 @@ function draw(data) {
     return b.count - a.count;
   });
 
-  console.log(sortedFilteredIngredients);
+  // console.log(sortedFilteredIngredients);
 
   scaleXIngredient.domain([0, filteredIngredients.length]);
   prepareMatrix(data,filteredIngredients);
   // console.log(filteredIngredients); //(array of object with name, count. index);
   console.log('filteredIngredients: '+filteredIngredients.length); //84
 
-  var sortedCuisines = ['Vietnamese', 'Thai' ,'Indian', 'MiddleEastern', 'Chinese', 'Japanese', 'Asian',
-    'Spanish_Portuguese', 'Jewish', 'French', 'Scandinavian', 'Greek', 'EasternEuropean_Russian', 'Italian', 'Irish', 'German', 'Mediterranean', 'English_Scottish',
+  var sortedCuisines = ['Japanese', 'Chinese', 'Asian', 'Vietnamese', 'Thai' ,'Indian', 'MiddleEastern',
+    'EasternEuropean_Russian', 'Jewish', 'Greek', 'Mediterranean', 'French',  'Italian','Spanish_Portuguese', 'German', 'English_Scottish', 'Irish', 'Scandinavian',
     'American', 'Cajun_Creole', 'Central_SouthAmerican', 'Mexican', 'Southern_SoulFood', 'Southwestern',
     'African', 'Moroccan']
 
@@ -230,7 +230,7 @@ function draw(data) {
       }
     }
   }
-  // console.log(pairedData);
+  console.log(pairedData);
 
 //------------------------DRAW ingredients--------------------------------------
   var rectIngredient = plot1.selectAll('rect').data(filteredIngredients);
@@ -501,8 +501,17 @@ function draw(data) {
     .attr("width", cellSize *0.75)
     .attr("height",cellSize *0.75)
     .style("fill", function(d) {
-      // console.log(d.ingredient);
-      return scaleColorMatrix(d.count);})
+      // console.log(d);
+      for (var i = 0; i < nestedCuisines.length; i++) {
+        for (var j = 0; j < nestedCuisines[i].values.length; j++) {
+          if (d.cuisine == nestedCuisines[i].values[j].key) {
+            var dishesPerCuisine = nestedCuisines[i].values[j].values.length;
+          }// how many dishes each cuisine
+        }
+      }
+      // console.log(d.count/dishesPerCuisine);
+      return scaleColorMatrix(d.count/dishesPerCuisine);
+    })
     .on('mouseenter',function(d){
       // console.log(d);
       var tooltip = d3.select('.custom-tooltip');
