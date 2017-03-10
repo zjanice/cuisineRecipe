@@ -12,7 +12,7 @@ var allCuisines = [];
 var rectIngredientWidth = 5, rectIngredientHeight = 5;
 var rectCuisineWidth = 5, rectCuisineHeight = 3;
 
-var cellSize = 24, col_number= 26, row_number= 350;
+var cellSize = 36, col_number= 26, row_number= 350;
 
 var plots = d3.selectAll('.plot')
 	.append('svg')
@@ -79,13 +79,13 @@ var ribbon = d3.ribbon()
 // 	.radius(innerRadius);
 
 d3.queue()
-  .defer(d3.csv,'data/recipe.csv',parse)
+  .defer(d3.csv,'data/modifiedrecipe.csv',parse)
   .await(dataloaded);
 
 function dataloaded(err, data){
   // console.log(data);
   var datasets = data;
-  console.log(allIngredients); // 350 ingredients in total
+  // console.log(allIngredients); // 350 ingredients in total
   // console.log(data.length); //13408 rows of record
   draw(data);
   // console.log(allCuisines); // 26 cuisines
@@ -126,43 +126,93 @@ function prepareMatrix(data,filteredIngredients) {
       }
     }
   }
+  row_number = filteredIngredients.length;
   console.log(filteredIngredients);
-  console.log(filteredIngredients.indexOf(data[0].ingredients[2]));
+  // console.log(filteredIngredients.indexOf(data[0].ingredients[2]));
 }
 
 
 function draw(data) {
   //-----------------------------Filter Data------------------------------------
   var filteredCuisines = allCuisines.filter(function(d){
-    // return d == 'French' || d == 'Italian' ||  d == 'Asian';
+    // return d == 'Asian' || d == 'Thai' || d == 'Vietnamese' || d == 'Indian'||
+    //        d == 'MiddleEastern' || d == 'Chinese' || d == 'Japanese' ||  //Aisan
+    //
+    //        d == 'Italian'|| d == 'Spanish_Portuguese'|| d == 'Jewish' || d == 'French'||
+    //        d == 'Scandinavian' || d == 'Greek'|| d == 'Spanish_Portuguese'|| d == 'Jewish' ||
+    //        d == 'French'|| d == 'Scandinavian' || d == 'EasternEuropean_Russian' ||
+    //        d == 'Irish' ||  d ==' German' || d == 'Mediterranean' || d == 'English_Scottish' ||//European
+    //
+    //        d == 'American'|| d == 'Cajun_Creole' || d == 'Central_SouthAmerican' ||
+    //        d == 'Mexican' || d == 'Southern_SoulFood' || d =='Southwestern' || //American
+    //
+    //        d == 'African'|| d == 'Moroccan';  //African
+
     return true;
   });
+
   // console.log('filteredCuisines: '+filteredCuisines);
   var filteredData = data.filter(function(d){
     return true;
-    // return d.cuisine == 'French'|| d == 'Italian' ||  d == 'Asian';
+    // return d == 'Asian' || d == 'Thai' || d == 'Vietnamese' || d == 'Indian'||
+    //        d == 'MiddleEastern' || d == 'Chinese' || d == 'Japanese' ||  //Aisan
+    //
+    //        d == 'Italian'|| d == 'Spanish_Portuguese'|| d == 'Jewish' || d == 'French'||
+    //        d == 'Scandinavian' || d == 'Greek'|| d == 'Spanish_Portuguese'|| d == 'Jewish' ||
+    //        d == 'French'|| d == 'Scandinavian' || d == 'EasternEuropean_Russian' ||
+    //        d == 'Irish' ||  d ==' German' || d == 'Mediterranean' || d == 'English_Scottish' ||//European
+    //
+    //        d == 'American'|| d == 'Cajun_Creole' || d == 'Central_SouthAmerican' ||
+    //        d == 'Mexican' || d == 'Southern_SoulFood' || d =='Southwestern' || //American
+
+          //  d == 'African'|| d == 'Moroccan';  //African
   });
   // console.log('filteredData: '+filteredData.length); // 136
 
+  var nestedCuisines = d3.nest()
+    .key(function(d) {return d.region; })
+    .key(function(d) {return d.cuisine;})
+    .entries(data);
+
+  for (var i = 0; i < nestedCuisines.length; i++) {
+    for (var j = 0; j < nestedCuisines[i].values.length; j++) {
+      console.log(nestedCuisines[i].values[j].key);
+    }
+  }
+  console.log(nestedCuisines);
+  // console.log(Object.values(nestedCuisines[0]));
+  // console.log(nestedCuisines[0].values); // cuisine name
+
   var filteredIngredients = Object.values(allIngredients);
   filteredIngredients = filteredIngredients.filter(function(d){
-    return d.count > 0; //1000
+    return d.count > 10; //1000
   });
 
   for (var i = 0; i < filteredIngredients.length; i++) {
     filteredIngredients[i].index = i ;
   }
 
+  sortedFilteredIngredients = filteredIngredients.sort(function (a, b) {
+    return b.count - a.count;
+  });
+
+  console.log(sortedFilteredIngredients);
+
   scaleXIngredient.domain([0, filteredIngredients.length]);
   prepareMatrix(data,filteredIngredients);
   // console.log(filteredIngredients); //(array of object with name, count. index);
   console.log('filteredIngredients: '+filteredIngredients.length); //84
 
-  for (var i = 0; i < filteredCuisines.length; i++) {
+  var sortedCuisines = ['Vietnamese', 'Thai' ,'Indian', 'MiddleEastern', 'Chinese', 'Japanese', 'Asian',
+    'Spanish_Portuguese', 'Jewish', 'French', 'Scandinavian', 'Greek', 'EasternEuropean_Russian', 'Italian', 'Irish', 'German', 'Mediterranean', 'English_Scottish',
+    'American', 'Cajun_Creole', 'Central_SouthAmerican', 'Mexican', 'Southern_SoulFood', 'Southwestern',
+    'African', 'Moroccan']
+
+  for (var i = 0; i < sortedCuisines.length; i++) {
     // filteredCuisines[i]
     for (var j = 0; j < filteredIngredients.length; j++) {
       var element = {};
-      element.cuisine = filteredCuisines[i];
+      element.cuisine = sortedCuisines[i];
       element.count = 0;
       element.ingredient = filteredIngredients[j];
       pairedData.push(element);
@@ -403,11 +453,12 @@ function draw(data) {
 
   //-----------------------------draw matrix chart -----------------------------
   plot3.selectAll('.rowLabelg')
-    .data(Object.keys(allIngredients))
+    // .data(Object.keys(allIngredients))
+    .data(filteredIngredients)
     .enter()
     .append('text')
     .attr('class','rowLabelg')
-    .text(function(d){return d;})
+    .text(function(d){return d.name;})
     .style("text-anchor", "left")
     .attr('x', 0)
     .attr('y', function(d,i){return i * cellSize  + 25;})
@@ -416,7 +467,8 @@ function draw(data) {
     .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
 
   plot3.selectAll('.colLabelg')
-    .data(filteredCuisines)
+    .data(sortedCuisines)
+    // .data(filteredCuisines)
     .enter()
     .append('text')
     .attr('class','colLabelg')
@@ -425,7 +477,7 @@ function draw(data) {
     .attr('x', 0)
     .attr('y', function(d,i){return i * cellSize;})
     // .attr("transform", "translate(-6," + cellSize /2 + ")")
-    .attr("transform", "translate("+cellSize * 6.8+ ",-6) rotate (-90)")
+    .attr("transform", "translate("+cellSize * 4.5+ ",-6) rotate (-90)")
     .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
     .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
 
@@ -452,7 +504,7 @@ function draw(data) {
       // console.log(d.ingredient);
       return scaleColorMatrix(d.count);})
     .on('mouseenter',function(d){
-      console.log(d);
+      // console.log(d);
       var tooltip = d3.select('.custom-tooltip');
       tooltip.selectAll('.value')
         .html('hi');
@@ -500,6 +552,7 @@ function draw(data) {
 
 function parse(d){
   var entry = {
+    region: d.Region,
     cuisine: d.Cuisine,
     ingredients: []
   };
