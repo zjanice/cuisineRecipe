@@ -12,7 +12,7 @@ var allCuisines = [];
 var rectIngredientWidth = 5, rectIngredientHeight = 5;
 var rectCuisineWidth = 5, rectCuisineHeight = 3;
 
-var cellSize = 36, col_number= 26, row_number= 350;
+var cellSize = 32, col_number= 26, row_number= 350;
 
 var plots = d3.selectAll('.plot')
 	.append('svg')
@@ -47,7 +47,7 @@ var scaleLineWidth = d3.scaleLinear()
 var scaleColor = d3.scaleOrdinal()
   .range(['#fd6b5a','#03afeb','orange']);
 var scaleColorMatrix = d3.scaleLinear()
-  .domain([0,1])
+  .domain([0,0.82])
   .range(["white","#4169e1"]);
 var colorScale20c = d3.scaleOrdinal().range(d3.schemeCategory20c);
 
@@ -452,35 +452,6 @@ function draw(data) {
   // console.log(allCuisines);
 
   //-----------------------------draw matrix chart -----------------------------
-  plot3.selectAll('.rowLabelg')
-    // .data(Object.keys(allIngredients))
-    .data(filteredIngredients)
-    .enter()
-    .append('text')
-    .attr('class','rowLabelg')
-    .text(function(d){return d.name;})
-    .style("text-anchor", "left")
-    .attr('x', 0)
-    .attr('y', function(d,i){return i * cellSize  + 25;})
-    // .attr("transform", "translate(-6," + cellSize / 1.5 + ")")
-    .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
-    .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
-
-  plot3.selectAll('.colLabelg')
-    .data(sortedCuisines)
-    // .data(filteredCuisines)
-    .enter()
-    .append('text')
-    .attr('class','colLabelg')
-    .text(function(d){return d;})
-    // .style("text-anchor", "right")
-    .attr('x', 0)
-    .attr('y', function(d,i){return i * cellSize;})
-    // .attr("transform", "translate(-6," + cellSize /2 + ")")
-    .attr("transform", "translate("+cellSize * 4.5+ ",-6) rotate (-90)")
-    .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
-    .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
-
   plot3.selectAll(".cellg")
     .data(pairedData)
     // .data(pairedData,function(d){return d.row+":"+d.col;})
@@ -512,27 +483,28 @@ function draw(data) {
       // console.log(d.count/dishesPerCuisine);
       return scaleColorMatrix(d.count/dishesPerCuisine);
     })
-    .on('mouseenter',function(d){
-      // console.log(d);
+    .on('mouseenter',function(d,i){
+      // console.log(i);
       var tooltip = d3.select('.custom-tooltip');
       tooltip.selectAll('.value')
         .html('hi');
       tooltip.transition().style('opacity',1);
       // d3.select(this).style('fill','red');
-      plot3.selectAll('.rowLabelg')
-        .style('opacity', 0.2);
-      plot3.selectAll('.colLabelg')
-        .style('opacity', 0.2);
+      // plot3.selectAll('.rowLabelg')
+      //   .style('opacity', 0.1);
+      // plot3.selectAll('.colLabelg')
+      //   .style('opacity', 0.1);
       plot3.selectAll('.cellg')
-        .style('opacity', 0.2);
+        .style('opacity', 0.1);
 
       d3.select(this)
         .style('opacity', 1);
-      plot3.selectAll('.cellg').filter(function(e){
-        var colId = Math.floor(d.id/row_number);
-        var rowId = d.id%row_number;
-        var cellColId = Math.floor(e.id/row_number);
-        var cellRowId = e.id%row_number;
+      plot3.selectAll('.cellg').filter(function(e,j){
+        // console.log(this);
+        var colId = Math.floor(i/row_number);
+        var rowId = i%row_number;
+        var cellColId = Math.floor(j/row_number);
+        var cellRowId = j%row_number;
 
         return colId == cellColId || rowId == cellRowId;
         // console.log(colId,rowId);
@@ -556,7 +528,39 @@ function draw(data) {
          plot3.selectAll('.cellg')
            .style('opacity', 1);
 
+    })
+    .on('click',function(d){
+
     });
+
+    plot3.append('g').selectAll('.rowLabelg')
+      // .data(Object.keys(allIngredients))
+      .data(filteredIngredients)
+      .enter()
+      .append('text')
+      .attr('class','rowLabelg')
+      .text(function(d){return d.name;})
+      .style("text-anchor", "left")
+      .attr('x', 0)
+      .attr('y', function(d,i){return i * cellSize  + 20;})
+      // .attr("transform", "translate(-6," + cellSize / 1.5 + ")")
+      .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
+      .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
+
+    plot3.append('g').selectAll('.colLabelg')
+      .data(sortedCuisines)
+      // .data(filteredCuisines)
+      .enter()
+      .append('text')
+      .attr('class','colLabelg')
+      .text(function(d){return d;})
+      // .style("text-anchor", "right")
+      .attr('x', 0)
+      .attr('y', function(d,i){return i * cellSize;})
+      // .attr("transform", "translate(-6," + cellSize /2 + ")")
+      .attr("transform", "translate("+cellSize * 5.2+ ",-6) rotate (-90)")
+      .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
+      .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
 } // end of function draw
 
 function parse(d){
