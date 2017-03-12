@@ -29,20 +29,28 @@ svg {
     position:relative;
 }
 
-.custom-tooltip{
+.custom-tooltip {
+    /*width: 100px;
+    height: 60px;*/
     position:absolute;
-    width:350px;
+    width:400px;
     min-height:50px;
-    padding:10px 5px;
+    padding:15px;
     background:white;
     box-shadow: 0 2px 2px 0px rgba(0,0,0,.1);
     top:0;
     left:0;
-    opacity:0;
+
     border: 1px solid #ddd;
     border-radius: 8px;
-    opacity: 1;
-    padding: 0 10px 0 10px;
+    opacity: 0;
+    background: #eee;
+    /*padding: 3px;*/
+    /*text-align: center;*/
+}
+
+#tooltip.hidden {
+  display: none;
 }
 
 .custom-tooltip .title{
@@ -50,6 +58,7 @@ svg {
     /*font-weight:bold;*/
     /*text-align: center;*/
     padding:5% 0 1% 0;
+    text-transform: capitalize;
     /*border-bottom: 1px solid #eee;*/
 }
 

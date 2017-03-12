@@ -278,9 +278,10 @@ function draw(data) {
       var tooltip = d3.select('.custom-tooltip');
 
       var list = ingrePairing[d.cuisine][d.ingredient.name];
+      // if (list == null) {}
+      console.log(d.cuisine, d.ingredient.name, list);
       keysSorted = Object.keys(list).sort(function(a,b){return list[b]-list[a]});
       // console.log(keysSorted[1], keysSorted[2], keysSorted[3]);
-
       tooltip.selectAll('.title')
         .html('<b>Cuisine:</b> ' + d.cuisine + '</br>' +
               '<b>Ingredient:</b> ' +d.ingredient.name + '</br>' +
@@ -335,11 +336,8 @@ function draw(data) {
       .attr('class','rowLabelg')
       .text(function(d){
         var ingredientName = d.name;
-        // function toTitleCase(str){
-        //   return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-        // }
-        d.name = ingredientName.replace(/_/g, ' ');
-        return d.name;})
+        ingredientName = ingredientName.replace(/_/g, ' ');
+        return ingredientName;})
       .style("text-anchor", "left")
       .attr('x', 0)
       .attr('y', function(d,i){return i * cellSize  + 20;})
@@ -354,7 +352,7 @@ function draw(data) {
       .append('text')
       .attr('class','colLabelg')
       .text(function(d){
-        d = d.replace(/_/g, ' ');
+        // d = d.replace(/_/g, ' ');
         return d;})
 
       // .style("text-anchor", "right")
