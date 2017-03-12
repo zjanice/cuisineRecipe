@@ -6,6 +6,7 @@ h = document.getElementById('plot1').clientHeight - m.t - m.b;
 // w = document.getElementById('canvas').clientWidth,
 // h = document.getElementById('canvas').clientHeight;
 var pairedData = [];
+var ingrePairing;
 
 var allIngredients = {};
 var allCuisines = [];
@@ -105,7 +106,7 @@ function getIngredientIndex(filteredIngredients,ingredientName) {
 }
 
 function prepareMatrix(data){
-  console.log(data);
+  // console.log(data);
   var matrix = {};
   for (var i = 0; i < data.length; i++) {
     var ingredients = data[i].ingredients;
@@ -201,7 +202,7 @@ function draw(data) {
 
   var filteredIngredients = Object.values(allIngredients);
   filteredIngredients = filteredIngredients.filter(function(d){
-    return d.count > 3000; //1000
+    return d.count > 1000; //1000
   });
   row_number = filteredIngredients.length;
 
@@ -215,7 +216,7 @@ function draw(data) {
   // console.log(nestedSortedFilteredIngredients);
 
   scaleXIngredient.domain([0, filteredIngredients.length]);
-  prepareIngrePairing(data,filteredIngredients);
+  ingrePairing = prepareIngrePairing(data,filteredIngredients);
   // console.log(filteredIngredients); //(array of object with name, count. index);
   console.log('filteredIngredients: '+filteredIngredients.length); //84
 
@@ -241,7 +242,7 @@ function draw(data) {
       }
     }
   }
-  console.log(pairedData);
+  // console.log(pairedData);
 
   //-----------------------------draw matrix chart -----------------------------
   plot1.selectAll(".cellg")
@@ -273,10 +274,17 @@ function draw(data) {
       return scaleColorMatrix(d.count/dishesPerCuisine);
     })
     .on('mouseenter',function(d,i){
-      // console.log(i);
+      // console.log(d);
       var tooltip = d3.select('.custom-tooltip');
-      tooltip.selectAll('.value')
-        .html('hi');
+
+      var list = ingrePairing[d.cuisine][d.ingredient.name];
+      keysSorted = Object.keys(list).sort(function(a,b){return list[b]-list[a]});
+      // console.log(keysSorted[1], keysSorted[2], keysSorted[3]);
+
+      tooltip.selectAll('.title')
+        .html('<b>Cuisine:</b> ' + d.cuisine + '</br>' +
+              '<b>Ingredient:</b> ' +d.ingredient.name + '</br>' +
+              '<b>Most popular paired ingredient:</b> ' + keysSorted[1]);
       tooltip.transition().style('opacity',1);
       plot1.selectAll('.cellg')
         .style('opacity', 0.1);
@@ -314,9 +322,9 @@ function draw(data) {
 
     })
     .on('click',function(d,i){
-      console.log(this);
-      console.log(d);
-      console.log(i);
+      // console.log(this);
+      // console.log(d);
+      // console.log(i);
     });
 
     plot1.append('g').selectAll('.rowLabelg')

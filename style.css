@@ -31,14 +31,13 @@ svg {
 
 .custom-tooltip{
     position:absolute;
-    width:250px;
+    width:350px;
     min-height:50px;
     padding:10px 5px;
     background:white;
     box-shadow: 0 2px 2px 0px rgba(0,0,0,.1);
     top:0;
     left:0;
-    visibility:hidden;
     opacity:0;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -47,8 +46,8 @@ svg {
 }
 
 .custom-tooltip .title{
-    font-size:1.2em;
-    font-weight:bold;
+    /*font-size:1.2em;*/
+    /*font-weight:bold;*/
     /*text-align: center;*/
     padding:5% 0 1% 0;
     /*border-bottom: 1px solid #eee;*/
