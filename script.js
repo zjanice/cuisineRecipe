@@ -333,7 +333,13 @@ function draw(data) {
       .enter()
       .append('text')
       .attr('class','rowLabelg')
-      .text(function(d){return d.name;})
+      .text(function(d){
+        var ingredientName = d.name;
+        // function toTitleCase(str){
+        //   return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+        // }
+        d.name = ingredientName.replace(/_/g, ' ');
+        return d.name;})
       .style("text-anchor", "left")
       .attr('x', 0)
       .attr('y', function(d,i){return i * cellSize  + 20;})
@@ -347,7 +353,10 @@ function draw(data) {
       .enter()
       .append('text')
       .attr('class','colLabelg')
-      .text(function(d){return d;})
+      .text(function(d){
+        d = d.replace(/_/g, ' ');
+        return d;})
+
       // .style("text-anchor", "right")
       .attr('x', 0)
       .attr('y', function(d,i){return i * cellSize;})
