@@ -49,6 +49,9 @@ var scaleColor = d3.scaleOrdinal()
 var scaleColorMatrix = d3.scaleLinear()
   .domain([0,0.82])
   .range(["white","#4169e1"]);
+var scaleColorPlot2 = d3.scaleLinear()
+  .domain([0,1])
+  .range(["white","red"]);
 var colorScale20c = d3.scaleOrdinal().range(d3.schemeCategory20c);
 
 var scaleOpacity = d3.scaleLinear()
@@ -278,16 +281,20 @@ function draw(data) {
       return scaleColorMatrix(d.count/dishesPerCuisine);
     })
     .on('mouseenter',function(d,i){
-      // console.log(d);
+      console.log(d);
       var tooltip = d3.select('.custom-tooltip');
 
       var list = ingrePairing[d.cuisine][d.ingredient.name];
       // if (list == null) {}
       // console.log(d.cuisine, d.ingredient.name, list);
-      keysSorted = Object.keys(list).sort(function(a,b){return list[b]-list[a]});
-      // console.log(list);
+
+      // keysSorted = Object.keys(list).sort(function(a,b){return list[b]-list[a]});
+      keysSorted = Object.entries(list).sort(function(a,b){return b[1]-a[1]});
+
+      console.log(list); // list is an object
+      // console.log(Object.keys(list)); // --> array
       // console.log(Object.values(list));
-      // console.log(keysSorted);
+      console.log(keysSorted);
       // console.log(Object.keys(list).length);
       tooltip.selectAll('.title')
         .html('<b>Cuisine:</b> ' + d.cuisine + '</br>' +
@@ -300,7 +307,7 @@ function draw(data) {
       d3.select(this)
         .style('opacity', 1);
       plot1.selectAll('.cellg').filter(function(e,j){
-        // console.log(this);
+        // console.log(this,e,j);
         var colId = Math.floor(i/row_number);
         var rowId = i%row_number;
         var cellColId = Math.floor(j/row_number);
@@ -310,11 +317,9 @@ function draw(data) {
         // console.log(colId,rowId);
       }).style('opacity',1);
 
-
       $('.selectedIngredient').html(d.ingredient.name.replace(/_/g, ' ') + ' in ' + d.cuisine.replace(/_/g, ' '));
-      $('.topPairedIngredients').html(keysSorted[1] +' , ' + keysSorted[2] + ' , ' + keysSorted[3]);
-      // console.log('total other ingridents paired with:' + Object.keys())
-
+      // $('.topPairedIngredients').html(keysSorted[1] +' , ' + keysSorted[2] + ' , ' + keysSorted[3]);
+    
       var top15Paired = [];
       top15Paired.push(keysSorted[1],keysSorted[2],keysSorted[3],keysSorted[4],
         keysSorted[5],keysSorted[6],keysSorted[7],keysSorted[8],keysSorted[9],
@@ -322,9 +327,7 @@ function draw(data) {
 
       // var plot2Drawing = d3.select('#plot2');
       // plot2Drawing.transition().style('opacity',1);
-      var rectIngredient = plot2.selectAll('g').data(top15Paired);
-
-      rectIngredient.exit().remove();
+      var rectIngredient = plot2.selectAll('g').data(keysSorted);
 
       //ENTER
       var rectIngredientEnter = rectIngredient.enter()
@@ -334,41 +337,34 @@ function draw(data) {
           return 'translate(0,'+scaleYIngredient(i) * 1.5+')';
         });
 
+      var currentIngredient = d.ingredient.name;
       rectIngredientEnter.append('rect')
         .attr('x',0)
         .attr('width',rectIngredientWidth)
         .attr('height',rectIngredientHeight)
-        .style('fill', 'red');
+        .style('fill',function(d){
+          return scaleColorPlot2(d[1]/list[currentIngredient]);
+        });
 
       rectIngredientEnter.append('text')
         .attr('class', 'ingredientLabel')
         .attr('x', rectIngredientWidth *2)
         .attr('y', rectIngredientWidth/2+5)
-        .text(function(d){
-          // console.log(d);
-          return d;})
+        .text(function(d){return d;})
         .style('fill', '#3e3e3e');
+
+      rectIngredient.select('rect')
+        .style('fill',function(d){
+          console.log(d);
+          return scaleColorPlot2(d[1]/list[currentIngredient]);
+        });
 
       rectIngredient.select('text')
         .transition().duration(1750)
-        //.ease("linear")
         .text(function(d){return d;});
 
-
-
-      // rectIngredientEnter.append('rect')
-      //   .attr('x',0)
-      //   .attr('width',rectIngredientWidth)
-      //   .attr('height',rectIngredientHeight)
-      //   .style('fill', 'red');
-      //
-      // rectIngredientEnter.append('text')
-      //   .attr('x', rectIngredientWidth *2)
-      //   .attr('y', rectIngredientWidth/2+5)
-      //   .text(function(d){
-      //     console.log(d);
-      //     return d;})
-      //   .style('fill', '#3e3e3e');
+      //EXIT
+      rectIngredient.exit().remove();
     })
     .on('mousemove',function(d){
          var tooltip = d3.select('.custom-tooltip');
@@ -396,48 +392,6 @@ function draw(data) {
       console.log(this);
       console.log(d);
       console.log(i);
-
-      // $('.selectedIngredient').html(d.ingredient.name.replace(/_/g, ' ') + ' in ' + d.cuisine.replace(/_/g, ' '));
-      // $('.topPairedIngredients').html(keysSorted[1] +' , ' + keysSorted[2] + ' , ' + keysSorted[3]);
-      // // console.log('total other ingridents paired with:' + Object.keys())
-      //
-      // var top15Paired = [];
-      // top15Paired.push(keysSorted[1],keysSorted[2],keysSorted[3],keysSorted[4],
-      //   keysSorted[5],keysSorted[6],keysSorted[7],keysSorted[8],keysSorted[9],
-      //   keysSorted[10],keysSorted[11],keysSorted[12],keysSorted[13],keysSorted[14],keysSorted[15]);
-      // var rectIngredient = plot2.selectAll('rect').data(top15Paired);
-      // //ENTER
-      // var rectIngredientEnter = rectIngredient.enter()
-      //   .append('g')
-      //   .attr('class','rectIngredient')
-      //   .attr('transform',function(d,i){
-      //     return 'translate(0,'+scaleYIngredient(i) * 1.5+')';
-      //     // return 'translate('+ (rectIngredientWidth+5) * i+',0)';
-      //   });
-      //
-      // rectIngredientEnter.append('rect')
-      //   .attr('x',0)
-      //   .attr('width',rectIngredientWidth)
-      //   .attr('height',rectIngredientHeight)
-      //   .style('fill', 'red');
-      //
-      // rectIngredientEnter.append('text')
-      //   .attr('x', rectIngredientWidth *2)
-      //   .attr('y', rectIngredientWidth/2+5)
-      //   .text(function(d){
-      //     console.log(d);
-      //     return d;})
-      //   .style('fill', '#3e3e3e');
-      //
-      // //UPDATE + ENTER
-      // // rectIngredientEnter.merge(rectIngredient)
-      // //
-      // //   .text(function(d){return d;});
-      //
-      //
-      // //EXIT
-      // rectIngredient.exit().remove();
-
     });
 
     plot1.append('g').selectAll('.rowLabelg')
