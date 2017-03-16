@@ -319,7 +319,7 @@ function draw(data) {
 
       $('.selectedIngredient').html(d.ingredient.name.replace(/_/g, ' ') + ' in ' + d.cuisine.replace(/_/g, ' '));
       // $('.topPairedIngredients').html(keysSorted[1] +' , ' + keysSorted[2] + ' , ' + keysSorted[3]);
-    
+
       var top15Paired = [];
       top15Paired.push(keysSorted[1],keysSorted[2],keysSorted[3],keysSorted[4],
         keysSorted[5],keysSorted[6],keysSorted[7],keysSorted[8],keysSorted[9],
@@ -327,7 +327,18 @@ function draw(data) {
 
       // var plot2Drawing = d3.select('#plot2');
       // plot2Drawing.transition().style('opacity',1);
-      var rectIngredient = plot2.selectAll('g').data(keysSorted);
+      var rectIngredient = plot2.selectAll('g')
+        .data(keysSorted,function(d){
+          return d[0];
+        });
+
+      rectIngredient.exit()
+        .transition()
+        .duration(5000)
+        .attr('transform',function(d,i){
+          return 'translate(2000, 3000)';
+        })
+        .remove();
 
       //ENTER
       var rectIngredientEnter = rectIngredient.enter()
@@ -338,6 +349,7 @@ function draw(data) {
         });
 
       var currentIngredient = d.ingredient.name;
+
       rectIngredientEnter.append('rect')
         .attr('x',0)
         .attr('width',rectIngredientWidth)
@@ -350,21 +362,39 @@ function draw(data) {
         .attr('class', 'ingredientLabel')
         .attr('x', rectIngredientWidth *2)
         .attr('y', rectIngredientWidth/2+5)
-        .text(function(d){return d;})
+        .text(function(d){return d[0];}) // d[0] show the name of ingredient
         .style('fill', '#3e3e3e');
 
-      rectIngredient.select('rect')
+      var rectIngridientTransit = rectIngredientEnter
+        .merge(rectIngredient)
+        .transition()
+        .attr('transform', function(d, i) {
+          return 'translate(0,'+scaleYIngredient(i) * 1.5+')';
+        });
+
+      rectIngridientTransit.select('rect')
+        .transition()
         .style('fill',function(d){
-          console.log(d);
           return scaleColorPlot2(d[1]/list[currentIngredient]);
         });
 
-      rectIngredient.select('text')
-        .transition().duration(1750)
+      rectIngredientTransit.select('text')
+        .transition()
         .text(function(d){return d;});
+          // .attr('x', rectIngredientWidth *2)
+          // .attr('y', rectIngredientWidth/2+5);
+
+
+
+      // rectIngredient.select('rect')
+      //   .style('fill','white')
+      //   .transition()
+      //
+      //
+      //
 
       //EXIT
-      rectIngredient.exit().remove();
+
     })
     .on('mousemove',function(d){
          var tooltip = d3.select('.custom-tooltip');
