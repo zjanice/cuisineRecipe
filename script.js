@@ -3,8 +3,7 @@ console.log('Cuisine Recipe project');
 var m = {t:50,r:50,b:50,l:50},
 w = document.getElementById('plot1').clientWidth - m.l - m.r,
 h = document.getElementById('plot1').clientHeight - m.t - m.b;
-// w = document.getElementById('canvas').clientWidth,
-// h = document.getElementById('canvas').clientHeight;
+
 var pairedData = [];
 var ingrePairing;
 
@@ -15,10 +14,11 @@ var sortedCuisines = ['Japanese', 'Chinese', 'Asian', 'Vietnamese', 'Thai' ,'Ind
     'American', 'Cajun_Creole', 'Central_SouthAmerican', 'Mexican', 'Southern_SoulFood', 'Southwestern',
     'African', 'Moroccan'];
 
-var rectIngredientWidth = 5, rectIngredientHeight = 5;
-var rectCuisineWidth = 5, rectCuisineHeight = 3;
+var rectIngredientWidth = 24, rectIngredientHeight = 24;
+// var rectCuisineWidth = 32, rectCuisineHeight = 32;
 
 var cellSize = 32, col_number= 26, row_number= 350;
+var ingredientColId, ingredientRowId, r = 10;
 
 var plots = d3.selectAll('.plot')
 	.append('svg')
@@ -29,15 +29,16 @@ var plots = d3.selectAll('.plot')
 	.attr('transform','translate('+m.l+','+m.t+')');
 
 var plot1 = plots.filter(function(d,i){ return i===0;}),
-    plot2 = plots.filter(function(d,i){ return i===1;});
+    plot2 = plots.filter(function(d,i){ return i===1;})
+    plot3 = plots.filter(function(d,i){ return i===2;});
 
 var scaleXCuisine = d3.scaleLinear()
   .domain([0,3])
   .range([0,w]);
 
-var scaleXIngredient = d3.scaleLinear()
-  .domain([0,62])
-  .range([0,w]);
+var scaleYIngredient = d3.scaleLinear()
+  .domain([0,100])
+  .range([0,h]);
 
 var scaleLineWidth = d3.scaleLinear()
   .domain([0,1000])
@@ -129,6 +130,7 @@ function prepareMatrix(data){
       }
     }
   }
+  // console.log(matrix);
   return matrix;
 }
 
@@ -205,6 +207,8 @@ function draw(data) {
     return d.count > 1000; //1000
   });
   row_number = filteredIngredients.length;
+  // ingredientColId = filteredIngredients.length % 40;
+  // ingredientRowId = Math.floor(filteredIngredients.length / 40);
 
   for (var i = 0; i < filteredIngredients.length; i++) {
     filteredIngredients[i].index = i ;
@@ -215,7 +219,7 @@ function draw(data) {
   });
   // console.log(nestedSortedFilteredIngredients);
 
-  scaleXIngredient.domain([0, filteredIngredients.length]);
+  // scaleXIngredient.domain([0, filteredIngredients.length]);
   ingrePairing = prepareIngrePairing(data,filteredIngredients);
   // console.log(filteredIngredients); //(array of object with name, count. index);
   console.log('filteredIngredients: '+filteredIngredients.length); //84
@@ -279,9 +283,12 @@ function draw(data) {
 
       var list = ingrePairing[d.cuisine][d.ingredient.name];
       // if (list == null) {}
-      console.log(d.cuisine, d.ingredient.name, list);
+      // console.log(d.cuisine, d.ingredient.name, list);
       keysSorted = Object.keys(list).sort(function(a,b){return list[b]-list[a]});
-      // console.log(keysSorted[1], keysSorted[2], keysSorted[3]);
+      // console.log(list);
+      // console.log(Object.values(list));
+      // console.log(keysSorted);
+      // console.log(Object.keys(list).length);
       tooltip.selectAll('.title')
         .html('<b>Cuisine:</b> ' + d.cuisine + '</br>' +
               '<b>Ingredient:</b> ' +d.ingredient.name + '</br>' +
@@ -302,6 +309,66 @@ function draw(data) {
         return colId == cellColId || rowId == cellRowId;
         // console.log(colId,rowId);
       }).style('opacity',1);
+
+
+      $('.selectedIngredient').html(d.ingredient.name.replace(/_/g, ' ') + ' in ' + d.cuisine.replace(/_/g, ' '));
+      $('.topPairedIngredients').html(keysSorted[1] +' , ' + keysSorted[2] + ' , ' + keysSorted[3]);
+      // console.log('total other ingridents paired with:' + Object.keys())
+
+      var top15Paired = [];
+      top15Paired.push(keysSorted[1],keysSorted[2],keysSorted[3],keysSorted[4],
+        keysSorted[5],keysSorted[6],keysSorted[7],keysSorted[8],keysSorted[9],
+        keysSorted[10],keysSorted[11],keysSorted[12],keysSorted[13],keysSorted[14],keysSorted[15]);
+
+      // var plot2Drawing = d3.select('#plot2');
+      // plot2Drawing.transition().style('opacity',1);
+      var rectIngredient = plot2.selectAll('g').data(top15Paired);
+
+      rectIngredient.exit().remove();
+
+      //ENTER
+      var rectIngredientEnter = rectIngredient.enter()
+        .append('g')
+        .attr('class','rect')
+        .attr('transform',function(d,i){
+          return 'translate(0,'+scaleYIngredient(i) * 1.5+')';
+        });
+
+      rectIngredientEnter.append('rect')
+        .attr('x',0)
+        .attr('width',rectIngredientWidth)
+        .attr('height',rectIngredientHeight)
+        .style('fill', 'red');
+
+      rectIngredientEnter.append('text')
+        .attr('class', 'ingredientLabel')
+        .attr('x', rectIngredientWidth *2)
+        .attr('y', rectIngredientWidth/2+5)
+        .text(function(d){
+          // console.log(d);
+          return d;})
+        .style('fill', '#3e3e3e');
+
+      rectIngredient.select('text')
+        .transition().duration(1750)
+        //.ease("linear")
+        .text(function(d){return d;});
+
+
+
+      // rectIngredientEnter.append('rect')
+      //   .attr('x',0)
+      //   .attr('width',rectIngredientWidth)
+      //   .attr('height',rectIngredientHeight)
+      //   .style('fill', 'red');
+      //
+      // rectIngredientEnter.append('text')
+      //   .attr('x', rectIngredientWidth *2)
+      //   .attr('y', rectIngredientWidth/2+5)
+      //   .text(function(d){
+      //     console.log(d);
+      //     return d;})
+      //   .style('fill', '#3e3e3e');
     })
     .on('mousemove',function(d){
          var tooltip = d3.select('.custom-tooltip');
@@ -320,12 +387,57 @@ function draw(data) {
            .style('opacity', 1);
          plot1.selectAll('.cellg')
            .style('opacity', 1);
+         //EXIT
+        //  var plot2Drawing = d3.select('#plot2');
+        //  plot2Drawing.transition().style('opacity',0);
 
     })
     .on('click',function(d,i){
-      // console.log(this);
-      // console.log(d);
-      // console.log(i);
+      console.log(this);
+      console.log(d);
+      console.log(i);
+
+      // $('.selectedIngredient').html(d.ingredient.name.replace(/_/g, ' ') + ' in ' + d.cuisine.replace(/_/g, ' '));
+      // $('.topPairedIngredients').html(keysSorted[1] +' , ' + keysSorted[2] + ' , ' + keysSorted[3]);
+      // // console.log('total other ingridents paired with:' + Object.keys())
+      //
+      // var top15Paired = [];
+      // top15Paired.push(keysSorted[1],keysSorted[2],keysSorted[3],keysSorted[4],
+      //   keysSorted[5],keysSorted[6],keysSorted[7],keysSorted[8],keysSorted[9],
+      //   keysSorted[10],keysSorted[11],keysSorted[12],keysSorted[13],keysSorted[14],keysSorted[15]);
+      // var rectIngredient = plot2.selectAll('rect').data(top15Paired);
+      // //ENTER
+      // var rectIngredientEnter = rectIngredient.enter()
+      //   .append('g')
+      //   .attr('class','rectIngredient')
+      //   .attr('transform',function(d,i){
+      //     return 'translate(0,'+scaleYIngredient(i) * 1.5+')';
+      //     // return 'translate('+ (rectIngredientWidth+5) * i+',0)';
+      //   });
+      //
+      // rectIngredientEnter.append('rect')
+      //   .attr('x',0)
+      //   .attr('width',rectIngredientWidth)
+      //   .attr('height',rectIngredientHeight)
+      //   .style('fill', 'red');
+      //
+      // rectIngredientEnter.append('text')
+      //   .attr('x', rectIngredientWidth *2)
+      //   .attr('y', rectIngredientWidth/2+5)
+      //   .text(function(d){
+      //     console.log(d);
+      //     return d;})
+      //   .style('fill', '#3e3e3e');
+      //
+      // //UPDATE + ENTER
+      // // rectIngredientEnter.merge(rectIngredient)
+      // //
+      // //   .text(function(d){return d;});
+      //
+      //
+      // //EXIT
+      // rectIngredient.exit().remove();
+
     });
 
     plot1.append('g').selectAll('.rowLabelg')
@@ -352,7 +464,7 @@ function draw(data) {
       .append('text')
       .attr('class','colLabelg')
       .text(function(d){
-        // d = d.replace(/_/g, ' ');
+        d = d.replace(/_/g, ' ');
         return d;})
 
       // .style("text-anchor", "right")
@@ -362,6 +474,7 @@ function draw(data) {
       .attr("transform", "translate("+cellSize * 5.2+ ",-6) rotate (-90)")
       .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
       .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
+
 } // end of function draw
 
 function parse(d){

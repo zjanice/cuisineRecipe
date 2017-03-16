@@ -4,7 +4,7 @@ h1 {
   color: #9c9c9c;
 }
 
-svg {
+#plot1 svg {
   padding-top: 140px;
 }
 
@@ -14,9 +14,16 @@ svg {
 }
 
 .plot{
-	min-height:2300px;
-  padding-top: 100px;
+	height:2300px;
+  /*min-height: 1000px;*/
+  /*padding-top: 100px;*/
 }
+/*
+#plot2 {
+  position: fixed;
+  left: 72%;
+  top: 25%;
+}*/
 
 .node .outer{
    opacity:.3;
@@ -54,12 +61,17 @@ svg {
 }
 
 .custom-tooltip .title{
-    /*font-size:1.2em;*/
-    /*font-weight:bold;*/
-    /*text-align: center;*/
-    padding:5% 0 1% 0;
-    text-transform: capitalize;
-    /*border-bottom: 1px solid #eee;*/
+  /*font-size:1.2em;*/
+  /*font-weight:bold;*/
+  /*text-align: center;*/
+  padding:5% 0 1% 0;
+  text-transform: capitalize;
+  /*border-bottom: 1px solid #eee;*/
+}
+
+.selectedIngredient {
+  text-transform: capitalize;
+  font-weight: bold;
 }
 
 .axis .tick line{

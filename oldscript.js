@@ -127,6 +127,7 @@ function prepareMatrix(data,filteredIngredients) {
     }
   }
   row_number = filteredIngredients.length;
+	console.log(matrix);
   // console.log(filteredIngredients);
   // console.log(filteredIngredients.indexOf(data[0].ingredients[2]));
 }
@@ -185,7 +186,7 @@ function draw(data) {
 
   var filteredIngredients = Object.values(allIngredients);
   filteredIngredients = filteredIngredients.filter(function(d){
-    return d.count > 10; //1000
+    return d.count > 2000; //1000
   });
 
   for (var i = 0; i < filteredIngredients.length; i++) {
@@ -426,30 +427,30 @@ function draw(data) {
     });
 
 
-  // rectIngredientEnter.on('mouseenter',function(d){
-  //   console.log(d.name);
-  //   var tooltip = d3.select('.custom-tooltip');
-  //   tooltip.selectAll('.title')
-  //       .html(d.name);
-  //   // tooltip.select('.value')
-  //   //     .html('$'+ d.price);
-  //   tooltip.transition().style('opacity',1);
-  //
-  //   d3.select(this).style('stroke-width','3px');
-  // })
-  // .on('mousemove',function(d){
-  //    var tooltip = d3.select('.custom-tooltip');
-  //    var xy = d3.mouse(d3.select('.container').node());
-  //    tooltip
-  //       .style('left',xy[0]+10+'px')
-  //       .style('top',xy[1]+10+'px');
-  //     })
-  // .on('mouseleave',function(d){
-  //    var tooltip = d3.select('.custom-tooltip');
-  //    tooltip.transition().style('opacity',0);
-  //    d3.select(this).style('stroke-width','0px');
-  //  });
-  // console.log(allCuisines);
+  rectIngredientEnter.on('mouseenter',function(d){
+    console.log(d.name);
+    var tooltip = d3.select('.custom-tooltip');
+    tooltip.selectAll('.title')
+        .html(d.name);
+    // tooltip.select('.value')
+    //     .html('$'+ d.price);
+    tooltip.transition().style('opacity',1);
+
+    d3.select(this).style('stroke-width','3px');
+  })
+  .on('mousemove',function(d){
+     var tooltip = d3.select('.custom-tooltip');
+     var xy = d3.mouse(d3.select('.container').node());
+     tooltip
+        .style('left',xy[0]+10+'px')
+        .style('top',xy[1]+10+'px');
+      })
+  .on('mouseleave',function(d){
+     var tooltip = d3.select('.custom-tooltip');
+     tooltip.transition().style('opacity',0);
+     d3.select(this).style('stroke-width','0px');
+   });
+  console.log(allCuisines);
 
   //-----------------------------draw matrix chart -----------------------------
   plot3.selectAll(".cellg")
