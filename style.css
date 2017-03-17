@@ -10,7 +10,8 @@
 }
 
 #plot1 svg {
-  padding-top: 140px;
+  padding-top: 10%;
+  padding-left: 14%;
 }
 
 .canvas{
@@ -19,7 +20,7 @@
 }
 
 .plot{
-	height:2300px;
+	height:2700px;
   /*min-height: 1000px;*/
   /*padding-top: 100px;*/
 }
@@ -78,6 +79,11 @@
 .selectedIngredient {
   text-transform: capitalize;
   font-weight: bold;
+  margin-left: 7%;
+}
+
+.rect text {
+  text-transform: capitalize;
 }
 
 .axis .tick line{

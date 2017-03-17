@@ -207,7 +207,7 @@ function draw(data) {
 
   var filteredIngredients = Object.values(allIngredients);
   filteredIngredients = filteredIngredients.filter(function(d){
-    return d.count > 100; //1000
+    return d.count > 400; //1000
   });
   row_number = filteredIngredients.length;
   // ingredientColId = filteredIngredients.length % 40;
@@ -363,7 +363,7 @@ function draw(data) {
         .attr('class', 'ingredientLabel')
         .attr('x', rectIngredientWidth *2)
         .attr('y', rectIngredientWidth/2+5)
-        .text(function(d){return d[0];}) // d[0] show the name of ingredient
+        .text(function(d){return d[0].replace(/_/g, ' ');}) // d[0] show the name of ingredient
         .style('fill', '#3e3e3e');
 
       var rectIngridientTransit = rectIngredientEnter
