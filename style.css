@@ -1,7 +1,12 @@
-h1 {
-  padding-top: 2%;
-  text-align: center;
-  color: #9c9c9c;
+#title {
+  padding: 2% 16%;
+  color: #1b3c17;
+  font-family: 'Griffy', cursive;
+  font-size: 3.5em;
+}
+
+#projectIntro {
+  padding: 3% 20% 2% 0%;
 }
 
 #plot1 svg {
@@ -18,12 +23,13 @@ h1 {
   /*min-height: 1000px;*/
   /*padding-top: 100px;*/
 }
-/*
+
 #plot2 {
-  position: fixed;
+  /*position: fixed;
   left: 72%;
-  top: 25%;
-}*/
+  top: 25%;*/
+  margin-top: 5%;
+}
 
 .node .outer{
    opacity:.3;
@@ -89,12 +95,13 @@ h1 {
 .rowLabelg {
   text-transform: capitalize;
 }
-/*.about {
+
+.about {
     margin-top: 3%;
     margin-bottom: 30px;
     padding-left: 10%;
     padding-right: 10%;
-    color: #eee;
+    color: #565656;
 }
 
 .aboutTitle {
@@ -107,4 +114,4 @@ h1 {
 
 .aboutContent {
     padding-top: 10px;
-}*/
+}

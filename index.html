@@ -9,10 +9,23 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
     <link href="style.css" rel="stylesheet"/>
-  </head>
+    <link href="https://fonts.googleapis.com/css?family=Griffy" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poiret+One" rel="stylesheet">
+</head>
   <body>
     <header>
-      <div id="title"><h1>Cuisine Recipe</h1></div>
+      <div class="row">
+        <div class='col-md-4' id="title">Ingredient Pairing</div>
+        <div class='col-md-8' id="projectIntro">
+          There are at least 200,000 edible ingredients and more than 40 cuisines in the world.
+          Based upon regions, cuisines may be devided to African cuisines, cuisines of the Americas,
+          Asian cuisines, and European cuisines.
+
+          This food ingredient pairing visualization will help you understand the following questions:</br>
+          What are the food ingredient combinations in each cuisine?</br>
+          Which ingredient(s) are more popular?
+        </div>
+      </div>
     </header>
     <div class="container">
       <div class="custom-tooltip">
@@ -34,13 +47,13 @@
       </div>
       <!-- <div class='plot' id='plot3'></div> -->
 
-      <!-- <div class="about">
+      <div class="about">
        <div class="aboutTitle">Acknowledgments</div>
        <div class="aboutContent">
          This visualization was created in <a href="https://d3js.org/">D3.js</a> by Yixuan (Janice) Zhang.
          The code for this visualization is available on <a href="https://github.com/uranusbean/cuisineRecipe">Github</a>.
        </div>
-      </div> -->
+      </div>
     </div>
 
     <script src="d3.js"></script>

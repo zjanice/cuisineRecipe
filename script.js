@@ -48,10 +48,10 @@ var scaleColor = d3.scaleOrdinal()
   .range(['#fd6b5a','#03afeb','orange']);
 var scaleColorMatrix = d3.scaleLinear()
   .domain([0,0.82])
-  .range(["white","#4169e1"]);
+  .range(["white","#36802d"]);
 var scaleColorPlot2 = d3.scaleLinear()
   .domain([0,1])
-  .range(["white","red"]);
+  .range(["white","#36802d"]);
 var colorScale20c = d3.scaleOrdinal().range(d3.schemeCategory20c);
 
 var scaleOpacity = d3.scaleLinear()
@@ -207,7 +207,7 @@ function draw(data) {
 
   var filteredIngredients = Object.values(allIngredients);
   filteredIngredients = filteredIngredients.filter(function(d){
-    return d.count > 1000; //1000
+    return d.count > 100; //1000
   });
   row_number = filteredIngredients.length;
   // ingredientColId = filteredIngredients.length % 40;
@@ -290,6 +290,7 @@ function draw(data) {
 
       // keysSorted = Object.keys(list).sort(function(a,b){return list[b]-list[a]});
       keysSorted = Object.entries(list).sort(function(a,b){return b[1]-a[1]});
+      ingredientSelf = keysSorted.shift();
 
       console.log(list); // list is an object
       // console.log(Object.keys(list)); // --> array
@@ -299,7 +300,7 @@ function draw(data) {
       tooltip.selectAll('.title')
         .html('<b>Cuisine:</b> ' + d.cuisine + '</br>' +
               '<b>Ingredient:</b> ' +d.ingredient.name + '</br>' +
-              '<b>Most popular paired ingredient:</b> ' + keysSorted[1]);
+              '<b>Most popular paired ingredient:</b> ' + keysSorted[0][0]);
       tooltip.transition().style('opacity',1);
       plot1.selectAll('.cellg')
         .style('opacity', 0.1);

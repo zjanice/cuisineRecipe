@@ -136,7 +136,7 @@ function prepareMatrix(data,filteredIngredients) {
 function draw(data) {
   //-----------------------------Filter Data------------------------------------
   var filteredCuisines = allCuisines.filter(function(d){
-    // return d == 'Asian' || d == 'Thai' || d == 'Vietnamese' || d == 'Indian'||
+    return d == 'Asian' || d == 'Thai' || d == 'Vietnamese' || d == 'Indian';
     //        d == 'MiddleEastern' || d == 'Chinese' || d == 'Japanese' ||  //Aisan
     //
     //        d == 'Italian'|| d == 'Spanish_Portuguese'|| d == 'Jewish' || d == 'French'||
@@ -149,13 +149,13 @@ function draw(data) {
     //
     //        d == 'African'|| d == 'Moroccan';  //African
 
-    return true;
+    // return true;
   });
 
   // console.log('filteredCuisines: '+filteredCuisines);
   var filteredData = data.filter(function(d){
-    return true;
-    // return d == 'Asian' || d == 'Thai' || d == 'Vietnamese' || d == 'Indian'||
+    // return tr1e;
+    return d == 'Asian' || d == 'Thai' || d == 'Vietnamese' || d == 'Indian';
     //        d == 'MiddleEastern' || d == 'Chinese' || d == 'Japanese' ||  //Aisan
     //
     //        d == 'Italian'|| d == 'Spanish_Portuguese'|| d == 'Jewish' || d == 'French'||
@@ -186,7 +186,7 @@ function draw(data) {
 
   var filteredIngredients = Object.values(allIngredients);
   filteredIngredients = filteredIngredients.filter(function(d){
-    return d.count > 2000; //1000
+    return d.count > 1000; //1000
   });
 
   for (var i = 0; i < filteredIngredients.length; i++) {
