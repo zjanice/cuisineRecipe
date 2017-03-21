@@ -318,8 +318,9 @@ function draw(data) {
         // console.log(colId,rowId);
       }).style('opacity',1);
 
-      $('.selectedIngredient').html(d.ingredient.name.replace(/_/g, ' ') + ' in ' + d.cuisine.replace(/_/g, ' '));
-      // $('.topPairedIngredients').html(keysSorted[1] +' , ' + keysSorted[2] + ' , ' + keysSorted[3]);
+      $('.prompt').html('What food ingredient goes well with');
+      $('.selectedIngredient').html(d.ingredient.name.replace(/_/g, ' ') );
+      $('.selectedCuisine').html(' in ' + d.cuisine.replace(/_/g, ' ') + ' cuisine');
 
       var top15Paired = [];
       top15Paired.push(keysSorted[1],keysSorted[2],keysSorted[3],keysSorted[4],
@@ -370,7 +371,7 @@ function draw(data) {
         .merge(rectIngredient)
         .transition()
         .attr('transform', function(d, i) {
-          return 'translate(0,'+scaleYIngredient(i) * 1.5+')';
+          return 'translate(0,'+scaleYIngredient(i) * 1.1+')';
         });
 
       rectIngridientTransit.select('rect')
@@ -385,14 +386,9 @@ function draw(data) {
           // .attr('x', rectIngredientWidth *2)
           // .attr('y', rectIngredientWidth/2+5);
 
-
-
       // rectIngredient.select('rect')
       //   .style('fill','white')
       //   .transition()
-      //
-      //
-      //
 
       //EXIT
 
@@ -453,12 +449,135 @@ function draw(data) {
         return d;})
 
       // .style("text-anchor", "right")
-      .attr('x', 0)
+      .attr('x', 15)
       .attr('y', function(d,i){return i * cellSize;})
       // .attr("transform", "translate(-6," + cellSize /2 + ")")
       .attr("transform", "translate("+cellSize * 5.2+ ",-6) rotate (-90)")
       .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
       .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
+
+    //Legend of Asian
+    plot1.append('line')
+      .attr('x1', 150)
+      .attr('y1', -220)
+      .attr('x2', 150)
+      .attr('y2', -210)
+      .attr('stroke-width', 1)
+      .attr('stroke', '#8c8c8c');
+
+    plot1.append('line')
+      .attr('x1', cellSize *7 + 140)
+      .attr('y1', -220)
+      .attr('x2', cellSize *7 + 140)
+      .attr('y2', -210)
+      .attr('stroke-width', 1)
+      .attr('stroke', '#8c8c8c');
+
+    plot1.append('line')
+      .attr('x1', 150)
+      .attr('y1', -220)
+      .attr('x2', cellSize *7 + 140)
+      .attr('y2', -220)
+      .attr('stroke-width', 1)
+      .attr('stroke', '#8c8c8c');
+
+    plot1.append('text')
+      .text('Asian')
+      .attr('x',140 + cellSize *7/2  )
+      .attr('y',-230);
+
+    //Legend of European
+    plot1.append('line')
+      .attr('x1', cellSize *7 + 150)
+      .attr('y1', -220)
+      .attr('x2', cellSize *7 + 150)
+      .attr('y2', -210)
+      .attr('stroke-width', 1)
+      .attr('stroke', '#8c8c8c');
+
+    plot1.append('line')
+      .attr('x1', cellSize *18 + 150)
+      .attr('y1', -220)
+      .attr('x2', cellSize *18 + 150)
+      .attr('y2', -210)
+      .attr('stroke-width', 1)
+      .attr('stroke', '#8c8c8c');
+
+    plot1.append('line')
+      .attr('x1', cellSize *7 + 150)
+      .attr('y1', -220)
+      .attr('x2', cellSize *18 + 150)
+      .attr('y2', -220)
+      .attr('stroke-width', 1)
+      .attr('stroke', '#8c8c8c');
+
+    plot1.append('text')
+      .text('European')
+      .attr('x', cellSize *7 + cellSize *18/2  )
+      .attr('y',-230);
+
+    //Legend of American
+    plot1.append('line')
+      .attr('x1', cellSize *18 + 160)
+      .attr('y1', -220)
+      .attr('x2', cellSize *18 + 160)
+      .attr('y2', -210)
+      .attr('stroke-width', 1)
+      .attr('stroke', '#8c8c8c');
+
+    plot1.append('line')
+      .attr('x1', cellSize *24 + 150)
+      .attr('y1', -220)
+      .attr('x2', cellSize *24 + 150)
+      .attr('y2', -210)
+      .attr('stroke-width', 1)
+      .attr('stroke', '#8c8c8c');
+
+    plot1.append('line')
+      .attr('x1', cellSize *18 + 160)
+      .attr('y1', -220)
+      .attr('x2', cellSize *24 + 150)
+      .attr('y2', -220)
+      .attr('stroke-width', 1)
+      .attr('stroke', '#8c8c8c');
+
+    plot1.append('text')
+      .text('American')
+      .attr('x', 30+ cellSize *24)
+      .attr('y',-230);
+
+    //Legend of Affircan
+    plot1.append('line')
+      .attr('x1', cellSize *24 + 160)
+      .attr('y1', -220)
+      .attr('x2', cellSize *24 + 160)
+      .attr('y2', -210)
+      .attr('stroke-width', 1)
+      .attr('stroke', '#8c8c8c');
+
+    plot1.append('line')
+      .attr('x1', cellSize *26 + 150)
+      .attr('y1', -220)
+      .attr('x2', cellSize *26 + 150)
+      .attr('y2', -210)
+      .attr('stroke-width', 1)
+      .attr('stroke', '#8c8c8c');
+
+    plot1.append('line')
+      .attr('x1', cellSize *24 + 160)
+      .attr('y1', -220)
+      .attr('x2', cellSize *26 + 150)
+      .attr('y2', -220)
+      .attr('stroke-width', 1)
+      .attr('stroke', '#8c8c8c');
+
+    plot1.append('text')
+      .text('African')
+      .attr('x', 100 + cellSize *26)
+      .attr('y',-230);
+
+
+
 
 } // end of function draw
 

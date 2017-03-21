@@ -10,7 +10,7 @@
 }
 
 #plot1 svg {
-  padding-top: 10%;
+  padding-top: 15%;
   padding-left: 14%;
 }
 
@@ -76,10 +76,13 @@
   /*border-bottom: 1px solid #eee;*/
 }
 
-.selectedIngredient {
+.promptContainer {
+  margin-left: 7%;
+}
+
+.selectedIngredient, .selectedCuisine {
   text-transform: capitalize;
   font-weight: bold;
-  margin-left: 7%;
 }
 
 .rect text {
