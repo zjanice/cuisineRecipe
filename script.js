@@ -207,7 +207,7 @@ function draw(data) {
 
   var filteredIngredients = Object.values(allIngredients);
   filteredIngredients = filteredIngredients.filter(function(d){
-    return d.count > 400; //1000
+    return d.count > 500; //1000
   });
   row_number = filteredIngredients.length;
   // ingredientColId = filteredIngredients.length % 40;
@@ -575,9 +575,6 @@ function draw(data) {
       .text('African')
       .attr('x', 100 + cellSize *26)
       .attr('y',-230);
-
-
-
 
 } // end of function draw
 

@@ -124,3 +124,27 @@
 .aboutContent {
     padding-top: 10px;
 }
+
+/*-------spiral chart------*/
+.axis path {
+  fill: none;
+  stroke: #999;
+  stroke-dasharray: 2 3;
+}
+.axis text {
+  font-size: 13px;
+  stroke: #222;
+}
+text.title {
+  font-size: 24px;
+}
+circle.tick {
+  fill: #f3f3f3;
+  stroke: #999;
+  stroke-dasharray: 2 3;
+}
+path.spiral {
+  fill: none;
+  stroke: #ee8d18;
+  stroke-width: 3px;
+}
