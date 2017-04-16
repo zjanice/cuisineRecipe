@@ -4,8 +4,13 @@ var m = {t:50,r:50,b:50,l:50},
 w = document.getElementById('plot1').clientWidth - m.l - m.r,
 h = document.getElementById('plot1').clientHeight - m.t - m.b;
 
-var pairedData = [];
+var ingreCuisinePairing = [];
 var ingrePairing;
+
+var nestedCuisines;
+var filteredCuisines;
+var filteredData;
+var filteredIngredients;
 
 var allIngredients = {};
 var allCuisines = [];
@@ -58,40 +63,70 @@ var scaleOpacity = d3.scaleLinear()
   .domain([0,2000])
   .range([0,1]);
 
-//---------------------------- Chord Variables ---------------------------------
-var outerRadius = Math.min(w, h) / 2  - 100,
-  innerRadius = outerRadius * 0.95,
-	opacityDefault = 0.7; //default opacity of chords
+// //---------------------------- Chord Variables ---------------------------------
+// var outerRadius = Math.min(w, h) / 2  - 100,
+//   innerRadius = outerRadius * 0.95,
+// 	opacityDefault = 0.7; //default opacity of chords
+// //
+// var matrix = [];
 //
-var matrix = [];
-
-var chord = d3.chord()
-  .padAngle(0.05)
-  .sortSubgroups(d3.descending);//sort the chords inside an arc from high to low
-	// .sortChords(d3.descending) //which chord should be shown on top when chords cross. Now the biggest chord is at the bottom
-	// .matrix(matrix);
-
-var arc = d3.arc()
-	.innerRadius(innerRadius)
-	.outerRadius(outerRadius);
-
-var ribbon = d3.ribbon()
-    .radius(innerRadius);
-
-// var path = d3.chord()
-// 	.radius(innerRadius);
+// var chord = d3.chord()
+//   .padAngle(0.05)
+//   .sortSubgroups(d3.descending);//sort the chords inside an arc from high to low
+// 	// .sortChords(d3.descending) //which chord should be shown on top when chords cross. Now the biggest chord is at the bottom
+// 	// .matrix(matrix);
+//
+// var arc = d3.arc()
+// 	.innerRadius(innerRadius)
+// 	.outerRadius(outerRadius);
+//
+// var ribbon = d3.ribbon()
+//     .radius(innerRadius);
 
 d3.queue()
-  .defer(d3.csv,'data/modifiedrecipe.csv',parse)
+  .defer(d3.csv, 'data/modifiedrecipe.csv', parse)
   .await(dataloaded);
 
 function dataloaded(err, data){
-  // console.log(data);
-  var datasets = data;
-  // console.log(allIngredients); // 350 ingredients in total
-  // console.log(data.length); //13408 rows of record
-  draw(data);
-  // console.log(allCuisines); // 26 cuisines
+  preprocessData(data);
+  draw();
+}
+
+function preprocessData(data) {
+  filterData(data);
+
+  nestedCuisines = d3.nest()
+    .key(function(d) {return d.region;})
+    .key(function(d) {return d.cuisine;})
+    .entries(data);
+
+  ingrePairing = prepareIngreToIngrePairing(data,filteredIngredients);
+  ingreCuisinePairing = prepareIngreToCuisinePairing(data);
+}
+
+function filterData(data) {
+
+  filteredCuisines = allCuisines.filter(function(d){
+    return true;
+  });
+
+  filteredData = data.filter(function(d){
+    return true;
+  });
+
+  filteredIngredients = Object.values(allIngredients);
+  filteredIngredients = filteredIngredients.filter(function(d){
+    return d.count > 500; //1000
+  });
+  row_number = filteredIngredients.length;
+
+  for (var i = 0; i < filteredIngredients.length; i++) {
+    filteredIngredients[i].index = i ;
+  }
+
+  sortedFilteredIngredients = filteredIngredients.sort(function (a, b) {
+    return b.count - a.count;
+  });
 }
 
 function getIngredientIndex(filteredIngredients,ingredientName) {
@@ -109,7 +144,11 @@ function getIngredientIndex(filteredIngredients,ingredientName) {
   }
 }
 
-function prepareMatrix(data){
+// prepareIngreToIngreMatrix returns a matrix given a certain data.
+// The matrix maps from one ingredient to another ingredient. The value in
+// the matrix is the number of co-occurance of the two ingredients.
+// The data are a list of dishes.
+function prepareIngreToIngreMatrix(data){
   // console.log(data);
   var matrix = {};
   for (var i = 0; i < data.length; i++) {
@@ -137,95 +176,23 @@ function prepareMatrix(data){
   return matrix;
 }
 
-function prepareIngrePairing(data,filteredIngredients) {
+// prepareIngreToIngrePairing returns a dictionary of ingredient to ingredient
+// paring matrix. The key of the dictionary is the name of the cuisine.
+function prepareIngreToIngrePairing(data,filteredIngredients) {
   var ingrePairing = {};
   for (var i = 0; i < sortedCuisines.length; i++) {
-    ingrePairing[sortedCuisines[i]] = prepareMatrix(data.filter(function(d){
-      return d.cuisine === sortedCuisines[i];
-    }));
+    ingrePairing[sortedCuisines[i]] = prepareIngreToIngreMatrix(
+      data.filter(function(d){
+        return d.cuisine === sortedCuisines[i];
+      })
+    );
   }
   console.log(ingrePairing);
   return ingrePairing;
-
-
-  // for (var i = 0; i < sortedCuisines.length; i++) {
-  //   for (var j = 0; j < filteredIngredients.length; j++) {
-  //     matrix.push([]);
-  //     for (var k = 0; k < filteredIngredients.length; k++) {
-  //       matrix[i].push(0);
-  //
-  //     }
-  //   }
-  // console.log(matrix[i]); // 26 matrix with all zero
-  // }
-  //
-  // // -------------------Find all ingredients combination------------------------
-  // for (var i = 0; i < data.length; i++) {
-  //   for (var j = 0; j < data[i].ingredients.length; j++) {
-  //     for (var k = j+1; k < data[i].ingredients.length; k++) {
-  //         // console.log(data[i].ingredients[j] + ' * ' + data[i].ingredients[k]);
-  //         var index1 = -1, index2 = -1;
-  //         index1 = getIngredientIndex(filteredIngredients, data[i].ingredients[j]);
-  //         index2 = getIngredientIndex(filteredIngredients, data[i].ingredients[k]);
-  //         if (index1 == -1 || index2 == -1) {
-  //           continue;  // if ingredients found not in filteredIngredients scope, then continue;
-  //         }
-  //         matrix[index1][index2] ++;
-  //         matrix[index2][index1] ++;
-  //     }
-  //   }
-  // }
-  // row_number = filteredIngredients.length;
-  // console.log(matrix);
-  // console.log(filteredIngredients.indexOf(data[0].ingredients[2]));
 }
 
-
-function draw(data) {
-  //-----------------------------Filter Data------------------------------------
-  var filteredCuisines = allCuisines.filter(function(d){
-    return true;
-  });
-
-  var filteredData = data.filter(function(d){
-    return true;
-  });
-
-  var nestedCuisines = d3.nest()
-    .key(function(d) {return d.region;})
-    .key(function(d) {return d.cuisine;})
-    .entries(data);
-
-  for (var i = 0; i < nestedCuisines.length; i++) {
-    for (var j = 0; j < nestedCuisines[i].values.length; j++) {
-      // console.log(nestedCuisines[i].values[j].key, nestedCuisines[i].values[j].values.length); // how many dishes each cuisine
-    }
-  }
-  // console.log(nestedCuisines);
-  // console.log(Object.values(nestedCuisines[0]));
-  // console.log(nestedCuisines[0].values); // cuisine name
-
-  var filteredIngredients = Object.values(allIngredients);
-  filteredIngredients = filteredIngredients.filter(function(d){
-    return d.count > 500; //1000
-  });
-  row_number = filteredIngredients.length;
-  // ingredientColId = filteredIngredients.length % 40;
-  // ingredientRowId = Math.floor(filteredIngredients.length / 40);
-
-  for (var i = 0; i < filteredIngredients.length; i++) {
-    filteredIngredients[i].index = i ;
-  }
-
-  sortedFilteredIngredients = filteredIngredients.sort(function (a, b) {
-    return b.count - a.count;
-  });
-  // console.log(nestedSortedFilteredIngredients);
-
-  // scaleXIngredient.domain([0, filteredIngredients.length]);
-  ingrePairing = prepareIngrePairing(data,filteredIngredients);
-  // console.log(filteredIngredients); //(array of object with name, count. index);
-  console.log('filteredIngredients: '+filteredIngredients.length); //84
+function prepareIngreToCuisinePairing(data) {
+  pairing = [];
 
   for (var i = 0; i < sortedCuisines.length; i++) {
     // filteredCuisines[i]
@@ -234,26 +201,29 @@ function draw(data) {
       element.cuisine = sortedCuisines[i];
       element.count = 0;
       element.ingredient = filteredIngredients[j];
-      pairedData.push(element);
+      pairing.push(element);
     }
   }
 
-  for (var i = 0; i < data.length ; i++) {
+  for (var i = 0; i < data.length; i++) {
     for (var j = 0; j < data[i].ingredients.length; j++) {
-      for (var k = 0; k < pairedData.length; k++) { //find element by cuisine & ingredients
-        if (data[i].ingredients[j] == pairedData[k].ingredient.name &&
-            data[i].cuisine == pairedData[k].cuisine) { // find the index (with object)
-          pairedData[k].count ++;
+      for (var k = 0; k < pairing.length; k++) { //find element by cuisine & ingredients
+        if (data[i].ingredients[j] == pairing[k].ingredient.name &&
+            data[i].cuisine == pairing[k].cuisine) { // find the index (with object)
+          pairing[k].count ++;
           break;
         }
       }
     }
   }
-  // console.log(pairedData);
+  console.log(pairing);
 
-  //-----------------------------draw matrix chart -----------------------------
+  return pairing
+}
+
+function renderIngreCuisineMatrixPlot() {
   plot1.selectAll(".cellg")
-    .data(pairedData)
+    .data(ingreCuisinePairing)
     .enter()
     .append("rect")
     .attr('class','cellg')
@@ -264,7 +234,7 @@ function draw(data) {
       return colId * cellSize;
     })
     .attr("y", function(d,i) {
-      var rowId = i%row_number;
+      var rowId = i % row_number;
       return rowId * cellSize;
     })
     // .attr("class", function(d){return "cell cell-border cr"+(d.row-1)+" cc"+(d.col-1);})
@@ -284,23 +254,11 @@ function draw(data) {
       console.log(d);
       var tooltip = d3.select('.custom-tooltip');
 
-      var list = ingrePairing[d.cuisine][d.ingredient.name];
-      // if (list == null) {}
-      // console.log(d.cuisine, d.ingredient.name, list);
-
-      // keysSorted = Object.keys(list).sort(function(a,b){return list[b]-list[a]});
-      keysSorted = Object.entries(list).sort(function(a,b){return b[1]-a[1]});
-      ingredientSelf = keysSorted.shift();
-
-      console.log(list); // list is an object
-      // console.log(Object.keys(list)); // --> array
-      // console.log(Object.values(list));
-      console.log(keysSorted);
       // console.log(Object.keys(list).length);
       tooltip.selectAll('.title')
         .html('<b>Cuisine:</b> ' + d.cuisine + '</br>' +
-              '<b>Ingredient:</b> ' +d.ingredient.name + '</br>' +
-              '<b>Most popular paired ingredient:</b> ' + keysSorted[0][0]);
+              '<b>Ingredient:</b> ' +d.ingredient.name + '</br>');
+              // '<b>Most popular paired ingredient:</b> ' + keysSorted[0][0]);
       tooltip.transition().style('opacity',1);
       plot1.selectAll('.cellg')
         .style('opacity', 0.1);
@@ -318,80 +276,7 @@ function draw(data) {
         // console.log(colId,rowId);
       }).style('opacity',1);
 
-      $('.prompt').html('What food ingredient goes well with');
-      $('.selectedIngredient').html(d.ingredient.name.replace(/_/g, ' ') );
-      $('.selectedCuisine').html(' in ' + d.cuisine.replace(/_/g, ' ') + ' cuisine');
-
-      var top15Paired = [];
-      top15Paired.push(keysSorted[1],keysSorted[2],keysSorted[3],keysSorted[4],
-        keysSorted[5],keysSorted[6],keysSorted[7],keysSorted[8],keysSorted[9],
-        keysSorted[10],keysSorted[11],keysSorted[12],keysSorted[13],keysSorted[14],keysSorted[15]);
-
-      // var plot2Drawing = d3.select('#plot2');
-      // plot2Drawing.transition().style('opacity',1);
-      var rectIngredient = plot2.selectAll('g')
-        .data(keysSorted,function(d){
-          return d[0];
-        });
-
-      rectIngredient.exit()
-        .transition()
-        .duration(5000)
-        .attr('transform',function(d,i){
-          return 'translate(2000, 3000)';
-        })
-        .remove();
-
-      //ENTER
-      var rectIngredientEnter = rectIngredient.enter()
-        .append('g')
-        .attr('class','rect')
-        .attr('transform',function(d,i){
-          return 'translate(0,'+scaleYIngredient(i) * 1.5+')';
-        });
-
-      var currentIngredient = d.ingredient.name;
-
-      rectIngredientEnter.append('rect')
-        .attr('x',0)
-        .attr('width',rectIngredientWidth)
-        .attr('height',rectIngredientHeight)
-        .style('fill',function(d){
-          return scaleColorPlot2(d[1]/list[currentIngredient]);
-        });
-
-      rectIngredientEnter.append('text')
-        .attr('class', 'ingredientLabel')
-        .attr('x', rectIngredientWidth *2)
-        .attr('y', rectIngredientWidth/2+5)
-        .text(function(d){return d[0].replace(/_/g, ' ');}) // d[0] show the name of ingredient
-        .style('fill', '#3e3e3e');
-
-      var rectIngridientTransit = rectIngredientEnter
-        .merge(rectIngredient)
-        .transition()
-        .attr('transform', function(d, i) {
-          return 'translate(0,'+scaleYIngredient(i) * 1.1+')';
-        });
-
-      rectIngridientTransit.select('rect')
-        .transition()
-        .style('fill',function(d){
-          return scaleColorPlot2(d[1]/list[currentIngredient]);
-        });
-
-      rectIngredientTransit.select('text')
-        .transition()
-        .text(function(d){return d;});
-          // .attr('x', rectIngredientWidth *2)
-          // .attr('y', rectIngredientWidth/2+5);
-
-      // rectIngredient.select('rect')
-      //   .style('fill','white')
-      //   .transition()
-
-      //EXIT
-
+      renderIngreCooccurancePlot(d)
     })
     .on('mousemove',function(d){
          var tooltip = d3.select('.custom-tooltip');
@@ -410,10 +295,6 @@ function draw(data) {
            .style('opacity', 1);
          plot1.selectAll('.cellg')
            .style('opacity', 1);
-         //EXIT
-        //  var plot2Drawing = d3.select('#plot2');
-        //  plot2Drawing.transition().style('opacity',0);
-
     })
     .on('click',function(d,i){
       console.log(this);
@@ -422,161 +303,242 @@ function draw(data) {
     });
 
     plot1.append('g').selectAll('.rowLabelg')
-      // .data(Object.keys(allIngredients))
-      .data(filteredIngredients)
-      .enter()
-      .append('text')
-      .attr('class','rowLabelg')
-      .text(function(d){
-        var ingredientName = d.name;
-        ingredientName = ingredientName.replace(/_/g, ' ');
-        return ingredientName;})
-      .style("text-anchor", "left")
-      .attr('x', 0)
-      .attr('y', function(d,i){return i * cellSize  + 20;})
-      // .attr("transform", "translate(-6," + cellSize / 1.5 + ")")
-      .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
-      .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
+        // .data(Object.keys(allIngredients))
+        .data(filteredIngredients)
+        .enter()
+        .append('text')
+        .attr('class','rowLabelg')
+        .text(function(d){
+          var ingredientName = d.name;
+          ingredientName = ingredientName.replace(/_/g, ' ');
+          return ingredientName;})
+        .style("text-anchor", "left")
+        .attr('x', 0)
+        .attr('y', function(d,i){return i * cellSize  + 20;})
+        // .attr("transform", "translate(-6," + cellSize / 1.5 + ")")
+        .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
+        .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
 
-    plot1.append('g').selectAll('.colLabelg')
-      .data(sortedCuisines)
-      // .data(filteredCuisines)
-      .enter()
-      .append('text')
-      .attr('class','colLabelg')
-      .text(function(d){
-        d = d.replace(/_/g, ' ');
-        return d;})
+      plot1.append('g').selectAll('.colLabelg')
+        .data(sortedCuisines)
+        // .data(filteredCuisines)
+        .enter()
+        .append('text')
+        .attr('class','colLabelg')
+        .text(function(d){
+          d = d.replace(/_/g, ' ');
+          return d;})
 
-      // .style("text-anchor", "right")
-      .attr('x', 15)
-      .attr('y', function(d,i){return i * cellSize;})
-      // .attr("transform", "translate(-6," + cellSize /2 + ")")
-      .attr("transform", "translate("+cellSize * 5.2+ ",-6) rotate (-90)")
-      .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
-      .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
+        // .style("text-anchor", "right")
+        .attr('x', 15)
+        .attr('y', function(d,i){return i * cellSize;})
+        // .attr("transform", "translate(-6," + cellSize /2 + ")")
+        .attr("transform", "translate("+cellSize * 5.2+ ",-6) rotate (-90)")
+        .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
+        .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
 
-    //Legend of Asian
-    plot1.append('line')
-      .attr('x1', 150)
-      .attr('y1', -220)
-      .attr('x2', 150)
-      .attr('y2', -210)
-      .attr('stroke-width', 1)
-      .attr('stroke', '#8c8c8c');
+        renderCuisineGroupInfo();
 
-    plot1.append('line')
-      .attr('x1', cellSize *7 + 140)
-      .attr('y1', -220)
-      .attr('x2', cellSize *7 + 140)
-      .attr('y2', -210)
-      .attr('stroke-width', 1)
-      .attr('stroke', '#8c8c8c');
+}
 
-    plot1.append('line')
-      .attr('x1', 150)
-      .attr('y1', -220)
-      .attr('x2', cellSize *7 + 140)
-      .attr('y2', -220)
-      .attr('stroke-width', 1)
-      .attr('stroke', '#8c8c8c');
+function renderIngreCooccurancePlot(ingreCuisinePair) {
 
-    plot1.append('text')
-      .text('Asian')
-      .attr('x',140 + cellSize *7/2  )
-      .attr('y',-230);
+  var d = ingreCuisinePair;
 
-    //Legend of European
-    plot1.append('line')
-      .attr('x1', cellSize *7 + 150)
-      .attr('y1', -220)
-      .attr('x2', cellSize *7 + 150)
-      .attr('y2', -210)
-      .attr('stroke-width', 1)
-      .attr('stroke', '#8c8c8c');
+  var list = ingrePairing[d.cuisine][d.ingredient.name];
+  keysSorted = Object.entries(list).sort(function(a,b){return b[1]-a[1]});
+  ingredientSelf = keysSorted.shift();
 
-    plot1.append('line')
-      .attr('x1', cellSize *18 + 150)
-      .attr('y1', -220)
-      .attr('x2', cellSize *18 + 150)
-      .attr('y2', -210)
-      .attr('stroke-width', 1)
-      .attr('stroke', '#8c8c8c');
+  $('.prompt').html('What food ingredient goes well with');
+  $('.selectedIngredient').html(d.ingredient.name.replace(/_/g, ' ') );
+  $('.selectedCuisine').html(' in ' + d.cuisine.replace(/_/g, ' ') + ' cuisine');
 
-    plot1.append('line')
-      .attr('x1', cellSize *7 + 150)
-      .attr('y1', -220)
-      .attr('x2', cellSize *18 + 150)
-      .attr('y2', -220)
-      .attr('stroke-width', 1)
-      .attr('stroke', '#8c8c8c');
+  var top15Paired = [];
+  top15Paired.push(keysSorted[1],keysSorted[2],keysSorted[3],keysSorted[4],
+    keysSorted[5],keysSorted[6],keysSorted[7],keysSorted[8],keysSorted[9],
+    keysSorted[10],keysSorted[11],keysSorted[12],keysSorted[13],keysSorted[14],keysSorted[15]);
 
-    plot1.append('text')
-      .text('European')
-      .attr('x', cellSize *7 + cellSize *18/2  )
-      .attr('y',-230);
+  var rectIngredient = plot2.selectAll('g')
+    .data(keysSorted,function(d){
+      return d[0];
+    });
 
-    //Legend of American
-    plot1.append('line')
-      .attr('x1', cellSize *18 + 160)
-      .attr('y1', -220)
-      .attr('x2', cellSize *18 + 160)
-      .attr('y2', -210)
-      .attr('stroke-width', 1)
-      .attr('stroke', '#8c8c8c');
+  rectIngredient.exit()
+    .transition()
+    .duration(5000)
+    .attr('transform',function(d,i){
+      return 'translate(2000, 3000)';
+    })
+    .remove();
 
-    plot1.append('line')
-      .attr('x1', cellSize *24 + 150)
-      .attr('y1', -220)
-      .attr('x2', cellSize *24 + 150)
-      .attr('y2', -210)
-      .attr('stroke-width', 1)
-      .attr('stroke', '#8c8c8c');
+  //ENTER
+  var rectIngredientEnter = rectIngredient.enter()
+    .append('g')
+    .attr('class','rect')
+    .attr('transform',function(d,i){
+      return 'translate(0,'+scaleYIngredient(i) * 1.5+')';
+    });
 
-    plot1.append('line')
-      .attr('x1', cellSize *18 + 160)
-      .attr('y1', -220)
-      .attr('x2', cellSize *24 + 150)
-      .attr('y2', -220)
-      .attr('stroke-width', 1)
-      .attr('stroke', '#8c8c8c');
+  var currentIngredient = d.ingredient.name;
 
-    plot1.append('text')
-      .text('American')
-      .attr('x', 30+ cellSize *24)
-      .attr('y',-230);
+  rectIngredientEnter.append('rect')
+    .attr('x',0)
+    .attr('width',rectIngredientWidth)
+    .attr('height',rectIngredientHeight)
+    .style('fill',function(d){
+      return scaleColorPlot2(d[1]/list[currentIngredient]);
+    });
 
-    //Legend of Affircan
-    plot1.append('line')
-      .attr('x1', cellSize *24 + 160)
-      .attr('y1', -220)
-      .attr('x2', cellSize *24 + 160)
-      .attr('y2', -210)
-      .attr('stroke-width', 1)
-      .attr('stroke', '#8c8c8c');
+  rectIngredientEnter.append('text')
+    .attr('class', 'ingredientLabel')
+    .attr('x', rectIngredientWidth *2)
+    .attr('y', rectIngredientWidth/2+5)
+    .text(function(d){return d[0].replace(/_/g, ' ');}) // d[0] show the name of ingredient
+    .style('fill', '#3e3e3e');
 
-    plot1.append('line')
-      .attr('x1', cellSize *26 + 150)
-      .attr('y1', -220)
-      .attr('x2', cellSize *26 + 150)
-      .attr('y2', -210)
-      .attr('stroke-width', 1)
-      .attr('stroke', '#8c8c8c');
+  var rectIngridientTransit = rectIngredientEnter
+    .merge(rectIngredient)
+    .transition()
+    .attr('transform', function(d, i) {
+      return 'translate(0,'+scaleYIngredient(i) * 1.1+')';
+    });
 
-    plot1.append('line')
-      .attr('x1', cellSize *24 + 160)
-      .attr('y1', -220)
-      .attr('x2', cellSize *26 + 150)
-      .attr('y2', -220)
-      .attr('stroke-width', 1)
-      .attr('stroke', '#8c8c8c');
+  rectIngridientTransit.select('rect')
+    .transition()
+    .style('fill',function(d){
+      return scaleColorPlot2(d[1]/list[currentIngredient]);
+    });
 
-    plot1.append('text')
-      .text('African')
-      .attr('x', 100 + cellSize *26)
-      .attr('y',-230);
+  rectIngridientTransit.select('text')
+    .transition()
+    .text(function(d){return d;});
+}
 
-} // end of function draw
+function renderCuisineGroupInfo() {
+  //Legend of Asian
+  plot1.append('line')
+    .attr('x1', 150)
+    .attr('y1', -220)
+    .attr('x2', 150)
+    .attr('y2', -210)
+    .attr('stroke-width', 1)
+    .attr('stroke', '#8c8c8c');
+
+  plot1.append('line')
+    .attr('x1', cellSize *7 + 140)
+    .attr('y1', -220)
+    .attr('x2', cellSize *7 + 140)
+    .attr('y2', -210)
+    .attr('stroke-width', 1)
+    .attr('stroke', '#8c8c8c');
+
+  plot1.append('line')
+    .attr('x1', 150)
+    .attr('y1', -220)
+    .attr('x2', cellSize *7 + 140)
+    .attr('y2', -220)
+    .attr('stroke-width', 1)
+    .attr('stroke', '#8c8c8c');
+
+  plot1.append('text')
+    .text('Asian')
+    .attr('x',140 + cellSize *7/2  )
+    .attr('y',-230);
+
+  //Legend of European
+  plot1.append('line')
+    .attr('x1', cellSize *7 + 150)
+    .attr('y1', -220)
+    .attr('x2', cellSize *7 + 150)
+    .attr('y2', -210)
+    .attr('stroke-width', 1)
+    .attr('stroke', '#8c8c8c');
+
+  plot1.append('line')
+    .attr('x1', cellSize *18 + 150)
+    .attr('y1', -220)
+    .attr('x2', cellSize *18 + 150)
+    .attr('y2', -210)
+    .attr('stroke-width', 1)
+    .attr('stroke', '#8c8c8c');
+
+  plot1.append('line')
+    .attr('x1', cellSize *7 + 150)
+    .attr('y1', -220)
+    .attr('x2', cellSize *18 + 150)
+    .attr('y2', -220)
+    .attr('stroke-width', 1)
+    .attr('stroke', '#8c8c8c');
+
+  plot1.append('text')
+    .text('European')
+    .attr('x', cellSize *7 + cellSize *18/2  )
+    .attr('y',-230);
+
+  //Legend of American
+  plot1.append('line')
+    .attr('x1', cellSize *18 + 160)
+    .attr('y1', -220)
+    .attr('x2', cellSize *18 + 160)
+    .attr('y2', -210)
+    .attr('stroke-width', 1)
+    .attr('stroke', '#8c8c8c');
+
+  plot1.append('line')
+    .attr('x1', cellSize *24 + 150)
+    .attr('y1', -220)
+    .attr('x2', cellSize *24 + 150)
+    .attr('y2', -210)
+    .attr('stroke-width', 1)
+    .attr('stroke', '#8c8c8c');
+
+  plot1.append('line')
+    .attr('x1', cellSize *18 + 160)
+    .attr('y1', -220)
+    .attr('x2', cellSize *24 + 150)
+    .attr('y2', -220)
+    .attr('stroke-width', 1)
+    .attr('stroke', '#8c8c8c');
+
+  plot1.append('text')
+    .text('American')
+    .attr('x', 30+ cellSize *24)
+    .attr('y',-230);
+
+  //Legend of Affircan
+  plot1.append('line')
+    .attr('x1', cellSize *24 + 160)
+    .attr('y1', -220)
+    .attr('x2', cellSize *24 + 160)
+    .attr('y2', -210)
+    .attr('stroke-width', 1)
+    .attr('stroke', '#8c8c8c');
+
+  plot1.append('line')
+    .attr('x1', cellSize *26 + 150)
+    .attr('y1', -220)
+    .attr('x2', cellSize *26 + 150)
+    .attr('y2', -210)
+    .attr('stroke-width', 1)
+    .attr('stroke', '#8c8c8c');
+
+  plot1.append('line')
+    .attr('x1', cellSize *24 + 160)
+    .attr('y1', -220)
+    .attr('x2', cellSize *26 + 150)
+    .attr('y2', -220)
+    .attr('stroke-width', 1)
+    .attr('stroke', '#8c8c8c');
+
+  plot1.append('text')
+    .text('African')
+    .attr('x', 100 + cellSize *26)
+    .attr('y',-230);
+}
+
+function draw() {
+  renderIngreCuisineMatrixPlot()
+}
 
 function parse(d){
   var entry = {
