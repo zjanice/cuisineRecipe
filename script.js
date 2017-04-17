@@ -6,6 +6,7 @@ h = document.getElementById('plot1').clientHeight - m.t - m.b;
 
 var ingreCuisinePairing = [];
 var ingrePairing;
+var cuisineSimilarityMatrix;
 
 var nestedCuisines;
 var filteredCuisines;
@@ -102,6 +103,7 @@ function preprocessData(data) {
 
   ingrePairing = prepareIngreToIngrePairing(data,filteredIngredients);
   ingreCuisinePairing = prepareIngreToCuisinePairing(data);
+  cuisineSimilarityMatrix = prepareCuisineSimilarityMatrix();
 }
 
 function filterData(data) {
@@ -221,6 +223,69 @@ function prepareIngreToCuisinePairing(data) {
   return pairing
 }
 
+function prepareCuisineSimilarityMatrix() {
+  var m = [];
+
+  for (var i = 0; i < filteredCuisines.length; i++) {
+    m.push([]);
+    for (var j = 0; j < filteredCuisines.length; j++) {
+      var similarity = calculateCuisineSimilarity(i, j)
+      m[i].push(similarity);
+    }
+  }
+
+  return m;
+}
+
+// calculateCuisineSimilarity returns a value between 0 and 1 that represents
+// how similar two cuisines are. The input arguments are i and j, which are
+// the cuisine indexes in the filteredCuisines list.
+function calculateCuisineSimilarity(i, j) {
+  if (i === j) return 1;
+
+
+  var similarity = 0;
+  var cuisine1 = filteredCuisines[i];
+  var totalDishesCuisine1 = cuisineTotalDishes(cuisine1);
+  var cuisine2 = filteredCuisines[j];
+  var totalDishesCuisine2 = cuisineTotalDishes(cuisine2);
+  var totalIngre = filteredIngredients.length
+  for (var k = 0; k < totalIngre; k++) {
+    var ingreName = filteredIngredients[k].name;
+
+    if (!ingrePairing[cuisine1][ingreName] ||
+      !ingrePairing[cuisine2][ingreName]) {
+        continue;
+    }
+
+    var count1 = ingrePairing[cuisine1][ingreName][ingreName];
+    var count2 = ingrePairing[cuisine2][ingreName][ingreName];
+
+    var percent1 = count1 / totalDishesCuisine1;
+    var percent2 = count1 / totalDishesCuisine2;
+
+    var score = 0;
+    if (percent1 < percent2) {
+      score = percent1 / percent2 / totalIngre;
+    } else {
+      score = percent2 / percent1 / totalIngre;
+    }
+
+    similarity += score;
+  }
+  return similarity;
+}
+
+function cuisineTotalDishes(cuisineName) {
+  for (var i = 0; i < nestedCuisines.length; i++) {
+    for (var j = 0; j < nestedCuisines[i].values.length; j++) {
+      if (cuisineName == nestedCuisines[i].values[j].key) {
+        return dishesPerCuisine = nestedCuisines[i].values[j].values.length;
+      }// how many dishes each cuisine
+    }
+  }
+}
+
 function renderIngreCuisineMatrixPlot() {
   plot1.selectAll(".cellg")
     .data(ingreCuisinePairing)
@@ -241,13 +306,7 @@ function renderIngreCuisineMatrixPlot() {
     .attr("width", cellSize *0.75)
     .attr("height",cellSize *0.75)
     .style("fill", function(d) {
-      for (var i = 0; i < nestedCuisines.length; i++) {
-        for (var j = 0; j < nestedCuisines[i].values.length; j++) {
-          if (d.cuisine == nestedCuisines[i].values[j].key) {
-            var dishesPerCuisine = nestedCuisines[i].values[j].values.length;
-          }// how many dishes each cuisine
-        }
-      }
+      var dishesPerCuisine = cuisineTotalDishes(d.cuisine)
       return scaleColorMatrix(d.count/dishesPerCuisine);
     })
     .on('mouseenter',function(d,i){
@@ -303,42 +362,41 @@ function renderIngreCuisineMatrixPlot() {
     });
 
     plot1.append('g').selectAll('.rowLabelg')
-        // .data(Object.keys(allIngredients))
-        .data(filteredIngredients)
-        .enter()
-        .append('text')
-        .attr('class','rowLabelg')
-        .text(function(d){
-          var ingredientName = d.name;
-          ingredientName = ingredientName.replace(/_/g, ' ');
-          return ingredientName;})
-        .style("text-anchor", "left")
-        .attr('x', 0)
-        .attr('y', function(d,i){return i * cellSize  + 20;})
-        // .attr("transform", "translate(-6," + cellSize / 1.5 + ")")
-        .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
-        .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
+      // .data(Object.keys(allIngredients))
+      .data(filteredIngredients)
+      .enter()
+      .append('text')
+      .attr('class','rowLabelg')
+      .text(function(d){
+        var ingredientName = d.name;
+        ingredientName = ingredientName.replace(/_/g, ' ');
+        return ingredientName;})
+      .style("text-anchor", "left")
+      .attr('x', 0)
+      .attr('y', function(d,i){return i * cellSize  + 20;})
+      // .attr("transform", "translate(-6," + cellSize / 1.5 + ")")
+      .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
+      .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
 
-      plot1.append('g').selectAll('.colLabelg')
-        .data(sortedCuisines)
-        // .data(filteredCuisines)
-        .enter()
-        .append('text')
-        .attr('class','colLabelg')
-        .text(function(d){
-          d = d.replace(/_/g, ' ');
-          return d;})
+    plot1.append('g').selectAll('.colLabelg')
+      .data(sortedCuisines)
+      // .data(filteredCuisines)
+      .enter()
+      .append('text')
+      .attr('class','colLabelg')
+      .text(function(d){
+        d = d.replace(/_/g, ' ');
+        return d;})
 
-        // .style("text-anchor", "right")
-        .attr('x', 15)
-        .attr('y', function(d,i){return i * cellSize;})
-        // .attr("transform", "translate(-6," + cellSize /2 + ")")
-        .attr("transform", "translate("+cellSize * 5.2+ ",-6) rotate (-90)")
-        .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
-        .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
+      // .style("text-anchor", "right")
+      .attr('x', 15)
+      .attr('y', function(d,i){return i * cellSize;})
+      // .attr("transform", "translate(-6," + cellSize /2 + ")")
+      .attr("transform", "translate("+cellSize * 5.2+ ",-6) rotate (-90)")
+      .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
+      .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
 
-        renderCuisineGroupInfo();
-
+    renderCuisineGroupInfo();
 }
 
 function renderIngreCooccurancePlot(ingreCuisinePair) {
