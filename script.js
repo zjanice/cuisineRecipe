@@ -54,6 +54,17 @@ var scaleLineWidth = d3.scaleLinear()
   .domain([0,1000])
   .range([0,10]);
 
+//Draw axis
+var scaleYbar = d3.scaleLinear()
+    .domain([0,10])
+    .range([0,h]);
+var scaleXbar = d3.scaleLinear()
+    .domain([0,1])
+    .range([0,w/2]);
+// var axisY = d3.axisLeft()
+//     .scale(scaleY)
+//     .tickSize(-w-200);
+
 var scaleColor = d3.scaleOrdinal()
   .range(['#fd6b5a','#03afeb','orange']);
 var scaleColorMatrix = d3.scaleLinear()
@@ -233,7 +244,7 @@ function prepareIngreToCuisinePairing(data) {
       }
     }
   }
-  console.log(pairing);
+  // console.log('pairing'+pairing);
 
   return pairing
 }
@@ -271,7 +282,6 @@ function prepareCuisineSimilarityMatrix() {
     }
   }
 
-  // console.log(m);
   return m;
 }
 
@@ -466,7 +476,7 @@ function renderIngreCuisineMatrixPlot() {
 
 function renderCuisineSimilarityMatrixPlot(){
   var cuisineMatrixPlotColCount = filteredCuisines.length;
-  plot3.selectAll(".similarityCellg")
+  plot3.selectAll('.similarityCellg')
     .data(cuisineSimilarityMatrix)
     .enter()
     .append("rect")
@@ -488,9 +498,13 @@ function renderCuisineSimilarityMatrixPlot(){
       return scaleColorCuisineMatrix(d);
     })
     .on('click',function(d,i){
-      console.log(this);
-      console.log(d);
-      console.log(i);
+      // console.log(d);
+      // console.log(i);
+      var colId = Math.floor(i/cuisineMatrixPlotColCount);
+      var rowId = i % cuisineMatrixPlotColCount;
+
+      // console.log(sortedCuisines[rowId], sortedCuisines[colId]);
+      renderIngreUsageBarPlot(sortedCuisines[rowId], sortedCuisines[colId]);
     });
 
     plot3.append('g').selectAll('.rowLabelg')
@@ -526,6 +540,104 @@ function renderCuisineSimilarityMatrixPlot(){
 
 }
 
+function renderIngreUsageBarPlot(cuisineA, cuisineB){
+  var ingreArrofA = [], ingreArrofB = [];
+  var totoalDishesOfA = cuisineTotalDishes(cuisineA);
+  var totoalDishesOfB = cuisineTotalDishes(cuisineB);
+
+  console.log(cuisineTotalDishes(cuisineA));
+  for (var i = 0; i < filteredIngredients.length; i++) {
+    var ingreName = filteredIngredients[i].name;
+    if ( !ingrePairing[cuisineA][ingreName]) {
+      ingreArrofA.push(0);
+    } else {
+      ingreArrofA.push(ingrePairing[cuisineA][ingreName][ingreName]/totoalDishesOfA);
+    }
+  }
+
+  for (var i = 0; i < filteredIngredients.length; i++) {
+    var ingreName = filteredIngredients[i].name;
+    if ( !ingrePairing[cuisineB][ingreName]) {
+      ingreArrofB.push(0);
+    } else {
+      ingreArrofB.push(ingrePairing[cuisineB][ingreName][ingreName]/totoalDishesOfB);
+    }
+  }
+  //
+  console.log(ingreArrofA);
+  console.log(ingreArrofB);
+  // console.log(ingrePairing);
+
+  //Draw cuisineA - ingreArrofA bar chart
+  var ingredientBars = plot4.selectAll('.ingredientUsageBarA')
+    .data(ingreArrofA);
+  //Enter
+  var ingredientBarsEnter = ingredientBars.enter()
+    .append('rect');
+  //Update
+  ingredientBars.merge(ingredientBarsEnter)
+    .attr('class','ingredientUsageBarA')
+    // .attr('transform','translate(0, 12)')
+    .attr('x', w/2 + 2)
+    .attr('width', function(d){return d*150;})
+    // .attr('transform',function(d,i){
+    //     return 'translate(0,'+scaleYbar(i)+')';
+    // })
+    .attr('y',function(d,i){
+      return i * cellSize;
+    })
+    .attr('height',15);
+
+  //Exit
+  ingredientBars.exit()
+    .remove();
+
+  //Draw cuisineB - ingreArrofB bar chart
+  var ingredientBars = plot4.selectAll('.ingredientUsageBarB')
+    .data(ingreArrofB);
+  //Enter
+  var ingredientBarsEnter = ingredientBars.enter()
+    .append('rect');
+  //Update
+  ingredientBars.merge(ingredientBarsEnter)
+    .attr('class','ingredientUsageBarB')
+    // .attr('transform','translate(0, 12)')
+    .attr('x', function(d){return (w/2 - d*150);})
+    .attr('width', function(d){return d*150;})
+    // .attr('transform',function(d,i){
+    //     return 'translate(0,'+scaleYbar(i)+')';
+    // })
+    .attr('y',function(d,i){
+      return i * cellSize;
+    })
+    .attr('height',15);
+
+  //Exit
+  ingredientBars.exit()
+    .remove();
+
+  // Label for plot4
+  var barLabel = plot4.append('g').selectAll('.barLabelg')
+    .data(filteredIngredients);
+  //Enter
+  var barLabelEnter =  barLabel.enter()
+    .append('text');
+  //Update
+  barLabel.merge(barLabelEnter)
+    .attr('class','barLabelg')
+    .text(function(d){
+      var ingredientName = d.name;
+      ingredientName = ingredientName.replace(/_/g, ' ');
+      return ingredientName;})
+    .style("text-anchor", "left")
+    .attr('x', 30)
+    .attr('y', function(d,i){return i * cellSize;});
+
+  //Exit
+  barLabel.exit()
+    .remove();
+}
+
 function renderIngreCooccurancePlot(ingreCuisinePair) {
 
   var d = ingreCuisinePair;
@@ -545,6 +657,7 @@ function renderIngreCooccurancePlot(ingreCuisinePair) {
 
   var rectIngredient = plot2.selectAll('g')
     .data(keysSorted,function(d){
+      // console.log(keysSorted);
       return d[0];
     });
 
@@ -579,7 +692,7 @@ function renderIngreCooccurancePlot(ingreCuisinePair) {
     .attr('x', rectIngredientWidth *2)
     .attr('y', rectIngredientWidth/2+5)
     .text(function(d){return d[0].replace(/_/g, ' ');}) // d[0] show the name of ingredient
-    .style('fill', '#3e3e3e');
+    .style('fill', 'red');
 
   var rectIngridientTransit = rectIngredientEnter
     .merge(rectIngredient)
