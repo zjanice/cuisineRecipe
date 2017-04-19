@@ -1,17 +1,32 @@
+.banner {
+  padding-top: 4%;
+  padding-right: 3%;
+  text-align: right;
+  /*font-family: 'Griffy', cursive;*/
+  font-family: 'Open Sans', sans-serif;
+}
+
 #title {
-  padding: 2% 16%;
   color: #1b3c17;
-  font-family: 'Griffy', cursive;
-  font-size: 3.5em;
+  font-size: 2.5em;
+}
+
+#subtitle {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1.2em;
 }
 
 #projectIntro {
   padding: 3% 20% 2% 0%;
 }
 
+.btn-group {
+  margin-left: 65%;
+}
+
 #plot1 svg {
   padding-top: 15%;
-  padding-left: 14%;
+  padding-left: 15%;
 }
 
 .canvas{
@@ -30,6 +45,10 @@
   left: 72%;
   top: 25%;*/
   margin-top: 5%;
+}
+
+#plot4 {
+  margin-top: 10%;
 }
 
 .node .outer{
@@ -125,8 +144,31 @@
     padding-top: 10px;
 }
 
+/*-----------plot 3 & 4--------*/
+#plot3 svg{
+  padding-top: 26%;
+  padding-left: 15%;
+}
+
+.cuisineABLabel {
+  opacity: 0;
+  margin-left: 40%;
+}
+
+#cuisineB {
+  padding-left: 10%;
+}
+
+.cuisineSimilarityContainer {
+  opacity: 0;
+  margin-left: 2%;
+  /*top: 5%;
+  position: absolute;*/
+}
+
+
 /*-------spiral chart------*/
-.axis path {
+/*.axis path {
   fill: none;
   stroke: #999;
   stroke-dasharray: 2 3;
@@ -147,4 +189,4 @@ path.spiral {
   fill: none;
   stroke: #ee8d18;
   stroke-width: 3px;
-}
+}*/

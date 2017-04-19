@@ -10,13 +10,14 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
     <link href="style.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css?family=Griffy" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Poiret+One" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 </head>
   <body>
     <header>
       <div class="row">
-        <div class='col-md-4' id="title">
-          Ingredient</br> Pairing
+        <div class='col-md-4 banner'>
+          <div id="title">Food Pairing</div>
+          <div id="subtitle">Visualization of Cuisine and Ingredient</div>
         </div>
         <div class='col-md-8' id="projectIntro">
           There are at least 200,000 edible ingredients and more than 40 cuisines in the world.
@@ -36,11 +37,11 @@
       </div>
 
       <div class="btn-group" role="group">
-        <!-- <button type="button" class="btn btn-secondary cuisineIngredientIChartBtn">Cuisine Ingredient</button>
-        <button type="button" class="btn btn-secondary chordChartBtn">Ingredient Chord</button> -->
+        <button type="button" class="btn btn-secondary cuisineIngreBtn">Cuisine Ingredient</button>
+        <button type="button" class="btn btn-secondary cuisineSimilarityBtn">Cuisine Similarity</button>
       </div>
       <!-- <section class="canvas" id="canvas"></section> -->
-      <div class="row">
+      <div class="row cuisineIngreContainer">
         <div class='plot col-md-8' id='plot1'></div>
   			<div class='plot col-md-4' id='plot2'>
           <div class="promptContainer">
@@ -51,8 +52,17 @@
 
         </div>
       </div>
-      <div class='plot col-md-8' id='plot3'></div>
-      <div class='plot col-md-4' id='plot4'></div>
+
+      <div class="row cuisineSimilarityContainer">
+        <div class='plot col-md-7' id='plot3'></div>
+        <div class='plot col-md-5' id='plot4'>
+          <div class="cuisineABLabel">
+            <span id="cuisineA">CuisineA </span>
+            <span id="cuisineB">CuisineB </span>
+          </div>
+          <!-- <div class="ingreLableContainer"></div> -->
+        </div>
+      </div>
 
       <div class="about">
        <div class="aboutTitle">Acknowledgments</div>

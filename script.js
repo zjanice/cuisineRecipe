@@ -471,10 +471,11 @@ function renderIngreCuisineMatrixPlot() {
       .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
       .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
 
-    renderCuisineGroupInfo();
+    // renderCuisineGroupInfo();
 }
 
 function renderCuisineSimilarityMatrixPlot(){
+
   var cuisineMatrixPlotColCount = filteredCuisines.length;
   plot3.selectAll('.similarityCellg')
     .data(cuisineSimilarityMatrix)
@@ -504,6 +505,7 @@ function renderCuisineSimilarityMatrixPlot(){
       var rowId = i % cuisineMatrixPlotColCount;
 
       // console.log(sortedCuisines[rowId], sortedCuisines[colId]);
+      renderBarPlotText();
       renderIngreUsageBarPlot(sortedCuisines[rowId], sortedCuisines[colId]);
     });
 
@@ -545,7 +547,7 @@ function renderIngreUsageBarPlot(cuisineA, cuisineB){
   var totoalDishesOfA = cuisineTotalDishes(cuisineA);
   var totoalDishesOfB = cuisineTotalDishes(cuisineB);
 
-  console.log(cuisineTotalDishes(cuisineA));
+  // console.log(cuisineTotalDishes(cuisineA));
   for (var i = 0; i < filteredIngredients.length; i++) {
     var ingreName = filteredIngredients[i].name;
     if ( !ingrePairing[cuisineA][ingreName]) {
@@ -564,8 +566,8 @@ function renderIngreUsageBarPlot(cuisineA, cuisineB){
     }
   }
   //
-  console.log(ingreArrofA);
-  console.log(ingreArrofB);
+  // console.log(ingreArrofA);
+  // console.log(ingreArrofB);
   // console.log(ingrePairing);
 
   //Draw cuisineA - ingreArrofA bar chart
@@ -577,16 +579,19 @@ function renderIngreUsageBarPlot(cuisineA, cuisineB){
   //Update
   ingredientBars.merge(ingredientBarsEnter)
     .attr('class','ingredientUsageBarA')
-    // .attr('transform','translate(0, 12)')
-    .attr('x', w/2 + 2)
-    .attr('width', function(d){return d*150;})
-    // .attr('transform',function(d,i){
-    //     return 'translate(0,'+scaleYbar(i)+')';
-    // })
-    .attr('y',function(d,i){
-      return i * cellSize;
+    // .attr('transform','translate()')
+    .attr('transform', function(d, i) {
+      return 'translate(0,'+i * cellSize+')';
     })
-    .attr('height',15);
+    .attr('x', w/3 + 2)
+    .transition()
+    // .duration(5000)
+    .attr('width', function(d){return d*150;})
+    // .attr('y',function(d,i){
+    //   return i * cellSize;
+    // })
+    .attr('height',15)
+    .style('fill', 'rgb(54, 128, 45)'); // green
 
   //Exit
   ingredientBars.exit()
@@ -601,23 +606,76 @@ function renderIngreUsageBarPlot(cuisineA, cuisineB){
   //Update
   ingredientBars.merge(ingredientBarsEnter)
     .attr('class','ingredientUsageBarB')
-    // .attr('transform','translate(0, 12)')
-    .attr('x', function(d){return (w/2 - d*150);})
-    .attr('width', function(d){return d*150;})
-    // .attr('transform',function(d,i){
-    //     return 'translate(0,'+scaleYbar(i)+')';
-    // })
-    .attr('y',function(d,i){
-      return i * cellSize;
+    .attr('transform', function(d, i) {
+      return 'translate(0,'+i * cellSize+')';
     })
-    .attr('height',15);
+    .attr('x', function(d){return (w/3 - d*150);})
+    .transition()
+    .attr('width', function(d){return d*150;})
+    // .attr('y',function(d,i){
+    //   return i * cellSize;
+    // })
+    .attr('height',15)
+    .style('fill', 'rgb(54, 128, 45)');
 
   //Exit
   ingredientBars.exit()
     .remove();
 
+  //Label for plot4
+  // var barLabelGroup = plot4.select('.barLabelGroup');
+  // var barLabel = barLabelGroup.selectAll('.barLabelg')
+  //   .data(filteredIngredients, function(d) {return d.name;});
+  //
+  // //Enter
+  // var barLabelEnter =  barLabel.enter()
+  //   .append('text');
+  //
+  // //Update
+  // barLabel.merge(barLabelEnter)
+  //   .attr('class','barLabelg')
+  //   .text(function(d){
+  //     var ingredientName = d.name;
+  //     ingredientName = ingredientName.replace(/_/g, ' ');
+  //     return ingredientName;})
+  //   .style("text-anchor", "left")
+  //   .attr('x', 30)
+  //   .attr('y', function(d,i){return i * cellSize;});
+  //
+  // //Exit
+  // barLabel.exit()
+  //   .remove();
+
+  //Append cuisine label
+  $('.cuisineABLabel').css('opacity',1);
+  $('#cuisineA').text(cuisineA.replace(/_/g, ' '));
+  $('#cuisineB').text(cuisineB.replace(/_/g, ' '));
+
+  // plot4.append('text')
+  //   .text(function(d){
+  //     return cuisineA.replace(/_/g, ' ');
+  //   })
+  //   .attr('x', w/3 + 10)
+  //   .attr('y', -10);
+  //
+  // plot4.append('text')
+  //   .text(function(d){
+  //     return cuisineB.replace(/_/g, ' ');
+  //   })
+  //   .attr('x', w/4)
+  //   .attr('y', -10);
+}
+
+function renderBarPlotText() {
+  // $('.ingreLabelContainer').text(function(d){
+  //   return 'hi';
+  //   // console.log(d);
+  //   // var ingredientName = d.name;
+  //   // ingredientName = ingredientName.replace(/_/g, ' ');
+  //   // return ingredientName;
+  // })
   // Label for plot4
-  var barLabel = plot4.append('g').selectAll('.barLabelg')
+  var barLabel = plot4.selectAll('.barLabelg')
     .data(filteredIngredients);
   //Enter
   var barLabelEnter =  barLabel.enter()
@@ -628,10 +686,11 @@ function renderIngreUsageBarPlot(cuisineA, cuisineB){
     .text(function(d){
       var ingredientName = d.name;
       ingredientName = ingredientName.replace(/_/g, ' ');
-      return ingredientName;})
+      return ingredientName;
+    })
     .style("text-anchor", "left")
-    .attr('x', 30)
-    .attr('y', function(d,i){return i * cellSize;});
+    .attr('x', 100)
+    .attr('y', function(d,i){return i * cellSize +15;});
 
   //Exit
   barLabel.exit()
@@ -653,10 +712,12 @@ function renderIngreCooccurancePlot(ingreCuisinePair) {
   var top15Paired = [];
   top15Paired.push(keysSorted[1],keysSorted[2],keysSorted[3],keysSorted[4],
     keysSorted[5],keysSorted[6],keysSorted[7],keysSorted[8],keysSorted[9],
-    keysSorted[10],keysSorted[11],keysSorted[12],keysSorted[13],keysSorted[14],keysSorted[15]);
+    keysSorted[10],keysSorted[11],keysSorted[12],keysSorted[13],keysSorted[14],
+    keysSorted[15],keysSorted[16],keysSorted[17],keysSorted[18],keysSorted[19],
+    keysSorted[20]);
 
   var rectIngredient = plot2.selectAll('g')
-    .data(keysSorted,function(d){
+    .data(top15Paired,function(d){ // keysSorted
       // console.log(keysSorted);
       return d[0];
     });
@@ -691,8 +752,11 @@ function renderIngreCooccurancePlot(ingreCuisinePair) {
     .attr('class', 'ingredientLabel')
     .attr('x', rectIngredientWidth *2)
     .attr('y', rectIngredientWidth/2+5)
-    .text(function(d){return d[0].replace(/_/g, ' ');}) // d[0] show the name of ingredient
-    .style('fill', 'red');
+    .text(function(d){
+      // return d[0][0];
+      return d[0].replace(/_/g, ' ');
+    }) // d[0] show the name of ingredient
+    .style('fill', '#3e3e3e');
 
   var rectIngridientTransit = rectIngredientEnter
     .merge(rectIngredient)
@@ -709,7 +773,7 @@ function renderIngreCooccurancePlot(ingreCuisinePair) {
 
   rectIngridientTransit.select('text')
     .transition()
-    .text(function(d){return d;});
+    .text(function(d){return d[0].replace(/_/g, ' ');}); //show text in plot2
 }
 
 function renderCuisineGroupInfo() {
@@ -838,6 +902,26 @@ function draw() {
   renderIngreCuisineMatrixPlot();
   renderCuisineSimilarityMatrixPlot();
 }
+
+$('.cuisineSimilarityBtn').click(function(){
+  $('.cuisineSimilarityContainer').css({
+    opacity: '1',
+    position: 'absolute',
+    top: '1%'
+  });
+  $('.cuisineIngreContainer').css('opacity',0);
+  // $('.cuisineSimilarityContainer').css('opacity',1);
+});
+
+$('.cuisineIngreBtn').click(function(){
+  $('.cuisineSimilarityContainer').css({
+    opacity: '0',
+    position: 'relative',
+    top: '65%'
+  });
+  $('.cuisineIngreContainer').css('opacity',1);
+  $('.cuisineSimilarityContainer').css('opacity',0);
+});
 
 function parse(d){
   var entry = {
