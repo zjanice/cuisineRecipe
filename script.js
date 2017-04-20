@@ -24,9 +24,8 @@ var sortedCuisines = [
     'African', 'Moroccan'];
 
 var rectIngredientWidth = 24, rectIngredientHeight = 24;
-// var rectCuisineWidth = 32, rectCuisineHeight = 32;
 
-var cellSize = 32, col_number= 26, row_number= 350;
+var cellSize = 28, col_number= 26, row_number= 350;
 var ingredientColId, ingredientRowId, r = 10;
 
 var plots = d3.selectAll('.plot')
@@ -291,7 +290,6 @@ function prepareCuisineSimilarityMatrix() {
 function calculateCuisineSimilarity(i, j) {
   if (i === j) return 1;
 
-
   var similarity = 0;
   var cuisine1 = sortedCuisines[i];
   var totalDishesCuisine1 = cuisineTotalDishes(cuisine1);
@@ -452,7 +450,7 @@ function renderIngreCuisineMatrixPlot() {
         return ingredientName;})
       .style("text-anchor", "left")
       .attr('x', 0)
-      .attr('y', function(d,i){return i * cellSize  + 20;})
+      .attr('y', function(d,i){return i * cellSize + 20;})
       // .attr("transform", "translate(-6," + cellSize / 1.5 + ")")
       .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
       .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);});
@@ -466,10 +464,9 @@ function renderIngreCuisineMatrixPlot() {
       .text(function(d){
         d = d.replace(/_/g, ' ');
         return d;})
-
       // .style("text-anchor", "right")
       .attr('x', 15)
-      .attr('y', function(d,i){return i * cellSize;})
+      .attr('y', function(d,i){return i * cellSize +20;})
       // .attr("transform", "translate(-6," + cellSize /2 + ")")
       .attr("transform", "translate("+cellSize * 5.2+ ",-6) rotate (-90)")
       .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
@@ -539,7 +536,7 @@ function renderCuisineSimilarityMatrixPlot(){
         d = d.replace(/_/g, ' ');
         return d;})
       .attr('x', 20)
-      .attr('y', function(d,i){return i * cellSize +100;})
+      .attr('y', function(d,i){return i * cellSize +120;})
       // .attr("transform", "translate(-6," + cellSize /2 + ")")
       .attr("transform", "translate("+cellSize * 5.2+ ",-6) rotate (-90)")
       .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
@@ -734,7 +731,7 @@ function renderIngreCooccurancePlot(ingreCuisinePair) {
     .append('g')
     .attr('class','rect')
     .attr('transform',function(d,i){
-      return 'translate(0,'+scaleYIngredient(i) * 1.5+')';
+      return 'translate(0,'+scaleYIngredient(i) * 1.2+')';
     });
 
   var currentIngredient = d.ingredient.name;
@@ -761,7 +758,7 @@ function renderIngreCooccurancePlot(ingreCuisinePair) {
     .merge(rectIngredient)
     .transition()
     .attr('transform', function(d, i) {
-      return 'translate(0,'+scaleYIngredient(i) * 1.1+')';
+      return 'translate(0,'+scaleYIngredient(i) * 1.2+')';
     });
 
   rectIngridientTransit.select('rect')
@@ -897,9 +894,50 @@ function renderCuisineGroupInfo() {
     .attr('y',-230);
 }
 
+function drawLegend(){
+  var legendContainer = d3.select('.key').append('svg')
+    .attr('wdith', w)
+    .attr('height', 50);
+
+  var key = d3.select(".key")
+    .append("svg")
+    .attr("width", 500)
+    .attr("height", cellSize*2);
+
+  var legend = key.append("defs")
+    .append("svg:linearGradient")
+    .attr("id", "gradient");
+
+  legend.append("stop")
+    .attr('class', 'stop-left')
+  	.attr("offset", "0%");
+
+  legend.append("stop")
+    .attr('class', 'stop-right')
+  	.attr("offset", "100%");
+
+  key.append("rect")
+    .classed('filled', true)
+    .attr("width", 400)
+    .attr("height", cellSize);
+
+  var cuisinIngreKeyLeft = key.append('text')
+    .attr('class', 'keyLeftText')
+    .text('Low usage')
+    .attr('x', 0)
+    .attr('y', 50);
+
+  var cuisinIngreKeyRight = key.append('text')
+    .attr('class', 'keyRightText')
+    .text('High usage')
+    .attr('x', 350)
+    .attr('y', 50);
+}
+
 function draw() {
   renderIngreCuisineMatrixPlot();
   renderCuisineSimilarityMatrixPlot();
+  drawLegend();
 }
 
 $('.cuisineSimilarityBtn').click(function(){
@@ -910,6 +948,8 @@ $('.cuisineSimilarityBtn').click(function(){
   });
   $('.cuisineIngreContainer').css('opacity',0);
   // $('.cuisineSimilarityContainer').css('opacity',1);
+  $('.keyLeftText').text('Low similarity');
+  $('.keyRightText').text('High similarity');
 });
 
 $('.cuisineIngreBtn').click(function(){
@@ -920,6 +960,8 @@ $('.cuisineIngreBtn').click(function(){
   });
   $('.cuisineIngreContainer').css('opacity',1);
   $('.cuisineSimilarityContainer').css('opacity',0);
+  $('.keyLeftText').text('Low usage');
+  $('.keyRightText').text('High usage');
 });
 
 function parse(d){

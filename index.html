@@ -20,13 +20,17 @@
           <div id="subtitle">Visualization of Cuisine and Ingredient</div>
         </div>
         <div class='col-md-8' id="projectIntro">
-          There are at least 200,000 edible ingredients and more than 40 cuisines in the world.
-          Based upon regions, cuisines may be devided to Asian cuisines, European cuisines, cuisines of the Americas
-          and African cuisines.
+          There are at least 200,000 edible ingredients and more than 40 cuisines
+          in the world.
+          Based upon regions, cuisines may be devided to <b>Asian</b> cuisines,
+          <b>European</b> cuisines, cuisines of <b>the Americas</b>
+          and <b>African</b> cuisines.
+          
+          This food ingredient pairing visualization will help audience understand the following questions:</br>
+          - What food ingredient goes well with in one particular cuisine?</br>
+          - Which ingredient(s) are more popular in that cuisine?</br>
+          - What is the similarity between two cuisine?</br>
 
-          This food ingredient pairing visualization will help you understand the following questions:</br>
-          What food ingredient goes well with in one particular cuisine?</br>
-          Which ingredient(s) are more popular?
         </div>
       </div>
     </header>
@@ -36,14 +40,18 @@
         <p class="value"></p>
       </div>
 
-      <div class="btn-group" role="group">
-        <button type="button" class="btn btn-secondary cuisineIngreBtn">Cuisine Ingredient</button>
-        <button type="button" class="btn btn-secondary cuisineSimilarityBtn">Cuisine Similarity</button>
+      <div class="row legendRow">
+        <div class="key col-md-6"></div>
+        <div class="btn-group col-md-6" role="group">
+          <button type="button" class="btn btn-secondary cuisineIngreBtn">Cuisine Ingredient</button>
+          <button type="button" class="btn btn-secondary cuisineSimilarityBtn">Cuisine Similarity</button>
+        </div>
       </div>
+
       <!-- <section class="canvas" id="canvas"></section> -->
       <div class="row cuisineIngreContainer">
-        <div class='plot col-md-8' id='plot1'></div>
-  			<div class='plot col-md-4' id='plot2'>
+        <div class='plot col-md-7' id='plot1'></div>
+  			<div class='plot col-md-5' id='plot2'>
           <div class="promptContainer">
             <div class="prompt"></div>
             <div class="selectedIngredient"></div>
@@ -56,12 +64,15 @@
       <div class="row cuisineSimilarityContainer">
         <div class='plot col-md-7' id='plot3'></div>
         <div class='plot col-md-5' id='plot4'>
+          <!-- <div class="plot4Title">
+            Ingredient Usage Comparison
+          </div> -->
           <div class="cuisineABLabel">
             <div id="cuisineA">CuisineA </div>
             <div>vs. </div>
             <div id="cuisineB">CuisineB </div>
           </div>
-          <!-- <div class="ingreLableContainer"></div> -->
+
         </div>
       </div>
 
