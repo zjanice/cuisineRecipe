@@ -17,10 +17,10 @@ var allIngredients = {};
 var allCuisines = [];
 var sortedCuisines = [
     'Japanese', 'Chinese', 'Asian', 'Vietnamese', 'Thai' ,'Indian',
-    'MiddleEastern', 'EasternEuropean_Russian', 'Jewish', 'Greek',
-    'Mediterranean', 'French',  'Italian', 'Spanish_Portuguese', 'German',
-    'English_Scottish', 'Irish', 'Scandinavian', 'American', 'Cajun_Creole',
-    'Southern_SoulFood', 'Southwestern', 'Mexican', 'Central_SouthAmerican',
+    'MiddleEastern', 'Greek',
+    'Mediterranean', 'Spanish_Portuguese', 'Italian', 'EasternEuropean_Russian', 'Jewish', 'French',  'German',
+    'English_Scottish', 'Irish', 'Scandinavian', 'American', 'Southern_SoulFood', 'Cajun_Creole',
+    'Southwestern', 'Mexican', 'Central_SouthAmerican',
     'African', 'Moroccan'];
 
 var rectIngredientWidth = 24, rectIngredientHeight = 24;
@@ -135,7 +135,7 @@ function preprocessData(data) {
 function filterData(data) {
 
   filteredCuisines = allCuisines.filter(function(d){
-    return cuisineTotalDishes(d) > 100;
+    return cuisineTotalDishes(d) > 0;
   });
 
   filteredData = data.filter(function(d){
@@ -144,7 +144,7 @@ function filterData(data) {
 
   filteredIngredients = Object.values(allIngredients);
   filteredIngredients = filteredIngredients.filter(function(d){
-    return d.count > 1000; //1000
+    return d.count > 100; //1000
   });
   row_number = filteredIngredients.length;
 
@@ -274,7 +274,7 @@ function prepareCuisineSimilarityMatrix() {
     // m.push([]);
     for (var j = 0; j < filteredCuisines.length; j++) {
       if (i === j) {
-        m[i * filteredCuisines.length + j] = 1;
+        // m[i * filteredCuisines.length + j] = 1;
       } else {
         m[i * filteredCuisines.length + j] =
           (m[i * filteredCuisines.length + j] - min) / (max - min);
@@ -293,9 +293,9 @@ function calculateCuisineSimilarity(i, j) {
 
 
   var similarity = 0;
-  var cuisine1 = filteredCuisines[i];
+  var cuisine1 = sortedCuisines[i];
   var totalDishesCuisine1 = cuisineTotalDishes(cuisine1);
-  var cuisine2 = filteredCuisines[j];
+  var cuisine2 = sortedCuisines[j];
   var totalDishesCuisine2 = cuisineTotalDishes(cuisine2);
   var totalIngre = filteredIngredients.length
   for (var k = 0; k < totalIngre; k++) {
@@ -314,7 +314,7 @@ function calculateCuisineSimilarity(i, j) {
 
     var score = 0;
 
-    score = (1 - Math.abs(percent1 - percent2)) * Math.min(percent1, percent2);
+    // score = (1 - Math.abs(percent1 - percent2)) * Math.min(percent1, percent2);
     // if(score >= Math.min(percent1, percent2)) {
     //   score = Math.min(percent1, percent2);
     // }
@@ -335,8 +335,12 @@ function calculateCuisineSimilarity(i, j) {
     //   score = percent2 / percent1 / totalIngre;
     // }
 
+    score = (percent1 - percent2) * (percent1 - percent2);
+
     similarity += score;
   }
+
+  similarity = 1 / Math.pow(similarity, 0.5)
   // console.log(similarity);
   return similarity;
 }
@@ -482,7 +486,7 @@ function renderCuisineSimilarityMatrixPlot(){
     .enter()
     .append("rect")
     .attr('class','similarityCellg')
-    .attr('transform','translate(150,0)')
+    .attr('transform','translate(250,0)')
     .attr("x", function(d,i) {
       // var colId = i % col_number;
       var colId = Math.floor(i/cuisineMatrixPlotColCount); //d.ingredient.index = d.id
@@ -504,6 +508,7 @@ function renderCuisineSimilarityMatrixPlot(){
       var colId = Math.floor(i/cuisineMatrixPlotColCount);
       var rowId = i % cuisineMatrixPlotColCount;
 
+      console.log("similarity: ", d);
       // console.log(sortedCuisines[rowId], sortedCuisines[colId]);
       renderBarPlotText();
       renderIngreUsageBarPlot(sortedCuisines[rowId], sortedCuisines[colId]);
@@ -533,8 +538,8 @@ function renderCuisineSimilarityMatrixPlot(){
       .text(function(d){
         d = d.replace(/_/g, ' ');
         return d;})
-      .attr('x', 15)
-      .attr('y', function(d,i){return i * cellSize;})
+      .attr('x', 20)
+      .attr('y', function(d,i){return i * cellSize +100;})
       // .attr("transform", "translate(-6," + cellSize /2 + ")")
       .attr("transform", "translate("+cellSize * 5.2+ ",-6) rotate (-90)")
       .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
@@ -583,15 +588,15 @@ function renderIngreUsageBarPlot(cuisineA, cuisineB){
     .attr('transform', function(d, i) {
       return 'translate(0,'+i * cellSize+')';
     })
-    .attr('x', w/3 + 2)
+    .attr('x', w/4 + 2)
     .transition()
     // .duration(5000)
-    .attr('width', function(d){return d*150;})
+    .attr('width', function(d){return d*170;})
     // .attr('y',function(d,i){
     //   return i * cellSize;
     // })
     .attr('height',15)
-    .style('fill', 'rgb(54, 128, 45)'); // green
+    .style('fill', 'rgb(162, 191, 158)'); // green
 
   //Exit
   ingredientBars.exit()
@@ -602,21 +607,22 @@ function renderIngreUsageBarPlot(cuisineA, cuisineB){
     .data(ingreArrofB);
   //Enter
   var ingredientBarsEnter = ingredientBars.enter()
-    .append('rect');
+    .append('rect')
+    .attr('x',w/4);
   //Update
   ingredientBars.merge(ingredientBarsEnter)
     .attr('class','ingredientUsageBarB')
     .attr('transform', function(d, i) {
       return 'translate(0,'+i * cellSize+')';
     })
-    .attr('x', function(d){return (w/3 - d*150);})
     .transition()
-    .attr('width', function(d){return d*150;})
+    .attr('x', function(d){return (w/4 - d*170);})
+    .attr('width', function(d){return d*170;})
     // .attr('y',function(d,i){
     //   return i * cellSize;
     // })
     .attr('height',15)
-    .style('fill', 'rgb(54, 128, 45)');
+    .style('fill', 'rgb(162, 191, 158)');
 
   //Exit
   ingredientBars.exit()
@@ -648,32 +654,25 @@ function renderIngreUsageBarPlot(cuisineA, cuisineB){
 
   //Append cuisine label
   $('.cuisineABLabel').css('opacity',1);
-  $('#cuisineA').text(cuisineA.replace(/_/g, ' '));
-  $('#cuisineB').text(cuisineB.replace(/_/g, ' '));
+  $('#cuisineA').text(cuisineB.replace(/_/g, ' '));
+  $('#cuisineB').text(cuisineA.replace(/_/g, ' '));
 
   // plot4.append('text')
   //   .text(function(d){
   //     return cuisineA.replace(/_/g, ' ');
   //   })
-  //   .attr('x', w/3 + 10)
+  //   .attr('x', w/4 + 10)
   //   .attr('y', -10);
   //
   // plot4.append('text')
   //   .text(function(d){
   //     return cuisineB.replace(/_/g, ' ');
   //   })
-  //   .attr('x', w/4)
+  //   .attr('x', w/4-50)
   //   .attr('y', -10);
 }
 
 function renderBarPlotText() {
-  // $('.ingreLabelContainer').text(function(d){
-  //   return 'hi';
-  //   // console.log(d);
-  //   // var ingredientName = d.name;
-  //   // ingredientName = ingredientName.replace(/_/g, ' ');
-  //   // return ingredientName;
-  // })
   // Label for plot4
   var barLabel = plot4.selectAll('.barLabelg')
     .data(filteredIngredients);
@@ -688,8 +687,8 @@ function renderBarPlotText() {
       ingredientName = ingredientName.replace(/_/g, ' ');
       return ingredientName;
     })
-    .style("text-anchor", "left")
-    .attr('x', 100)
+    .style("text-anchor", "right")
+    .attr('x', 0)
     .attr('y', function(d,i){return i * cellSize +15;});
 
   //Exit
@@ -724,9 +723,9 @@ function renderIngreCooccurancePlot(ingreCuisinePair) {
 
   rectIngredient.exit()
     .transition()
-    .duration(5000)
+    .duration(10000)
     .attr('transform',function(d,i){
-      return 'translate(2000, 3000)';
+      return 'translate(2000, 30000)';
     })
     .remove();
 

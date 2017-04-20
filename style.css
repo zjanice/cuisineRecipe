@@ -2,13 +2,13 @@
   padding-top: 4%;
   padding-right: 3%;
   text-align: right;
-  /*font-family: 'Griffy', cursive;*/
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Griffy', cursive;
+  /*font-family: 'Open Sans', sans-serif;*/
 }
 
 #title {
   color: #1b3c17;
-  font-size: 2.5em;
+  font-size: 3em;
 }
 
 #subtitle {
@@ -26,12 +26,12 @@
 
 #plot1 svg {
   padding-top: 15%;
-  padding-left: 15%;
+  padding-left: 13%;
 }
 
 .canvas{
-    width:100%;
-    min-height:800px;
+  width:100%;
+  min-height:800px;
 }
 
 .plot{
@@ -44,7 +44,7 @@
   /*position: fixed;
   left: 72%;
   top: 25%;*/
-  margin-top: 5%;
+  margin-top: 6%;
 }
 
 #plot4 {
@@ -146,17 +146,31 @@
 
 /*-----------plot 3 & 4--------*/
 #plot3 svg{
-  padding-top: 26%;
-  padding-left: 15%;
+  padding-top: 23%;
+  padding-left: 3%;
+}
+
+.cuisineABLabel div {
+  display: inline-block;
 }
 
 .cuisineABLabel {
   opacity: 0;
-  margin-left: 40%;
+  position: absolute;
+  left: 13%;
+}
+
+#cuisineA {
+  text-align: right;
+}
+
+#cuisineA, #cuisineB {
+  width: 250px;
+  font-weight: bold;
 }
 
 #cuisineB {
-  padding-left: 10%;
+  /*padding-left: 10%;*/
 }
 
 .cuisineSimilarityContainer {
