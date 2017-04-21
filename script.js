@@ -982,6 +982,8 @@ function draw() {
 }
 
 $('.cuisineSimilarityBtn').click(function(){
+  $('.cuisineSimilarityBtn').addClass('btnSelected');
+  $('.cuisineIngreBtn').removeClass('btnSelected');
   $('.cuisineSimilarityContainer').css({
     opacity: '1',
     position: 'absolute',
@@ -994,6 +996,8 @@ $('.cuisineSimilarityBtn').click(function(){
 });
 
 $('.cuisineIngreBtn').click(function(){
+  $('.cuisineSimilarityBtn').removeClass('btnSelected');
+  $('.cuisineIngreBtn').addClass('btnSelected');
   $('.cuisineSimilarityContainer').css({
     opacity: '0',
     position: 'relative',

@@ -1,8 +1,13 @@
+body{
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
 .banner {
   padding-top: 3%;
   padding-right: 5%;
   text-align: right;
-  font-family: 'Griffy', cursive;
+  /*font-family: 'Griffy', cursive;*/
+  font-family: 'Tangerine', cursive;
   /*font-family: 'Open Sans', sans-serif;*/
 }
 
@@ -23,12 +28,25 @@
 .btn-secondary {
   background-color: #e6e8e5;
   border: none;
-  border-bottom: 3px dotted #404040;
+  /*border-bottom: 3px dotted #404040;*/
+
+}
+
+.btn-secondary:hover, .btn-secondary:active, .btn-secondary:visited {
+  background-color: #66BB6A !important;
+  border: none !important;
+  /*border-bottom: 3px dotted #404040 !important;*/
+}
+
+.btnSelected {
+  background-color: #66BB6A !important;
+  border: none !important;
+  /*border-bottom: 3px dotted #404040 !important;*/
 }
 
 #title {
   color: #22521b;
-  font-size: 3.5em;
+  font-size: 4em;
 }
 
 #subtitle {
@@ -52,7 +70,7 @@
 }
 
 .plot{
-	height:2500px;
+	height:2800px;
   /*min-height: 1000px;*/
   /*padding-top: 100px;*/
 }
@@ -61,7 +79,7 @@
   /*position: fixed;
   left: 72%;
   top: 25%;*/
-  margin-top: 10%;
+  margin-top: 9.5%;
 }
 
 .node .outer{
@@ -165,7 +183,7 @@
 
 #plot4 {
   /*margin-top: 9%;*/
-  margin-top: 6%;
+  margin-top: 7%;
   padding-left: 0;
   border-left: 1px solid #eee;
 }
