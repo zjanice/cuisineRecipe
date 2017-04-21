@@ -1,9 +1,29 @@
 .banner {
-  padding-top: 4%;
+  padding-top: 3%;
   padding-right: 5%;
   text-align: right;
   font-family: 'Griffy', cursive;
   /*font-family: 'Open Sans', sans-serif;*/
+}
+
+.divider {
+  height: 1px;
+  width:70%;
+  display:block; /* for use on default inline elements like span */
+  margin: 9px 0;
+  overflow: hidden;
+  background-color: #e5e5e5;
+  margin-left: 12%;
+}
+
+.btnDivContainer, .btnDivMatrix {
+  margin-top: 2%;
+}
+
+.btn-secondary {
+  background-color: #e6e8e5;
+  border: none;
+  border-bottom: 3px dotted #404040;
 }
 
 #title {
@@ -22,7 +42,7 @@
 }
 
 #plot1 svg {
-  padding-top: 25%;
+  padding-top: 23%;
   padding-left: 13%;
 }
 
@@ -144,7 +164,8 @@
 }
 
 #plot4 {
-  margin-top: 9%;
+  /*margin-top: 9%;*/
+  margin-top: 6%;
   padding-left: 0;
   border-left: 1px solid #eee;
 }
@@ -183,7 +204,7 @@
 .cuisineSimilarityContainer {
   opacity: 0;
   margin-left: 2%;
-  margin-top: 5%;
+  /*margin-top: 5%;*/
   /*top: 5%;
   position: absolute;*/
 }

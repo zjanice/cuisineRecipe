@@ -897,12 +897,12 @@ function renderCuisineGroupInfo() {
 function drawLegend(){
   var legendContainer = d3.select('.key').append('svg')
     .attr('wdith', w)
-    .attr('height', 50);
+    .attr('height', 30);
 
   var key = d3.select(".key")
     .append("svg")
-    .attr("width", 500)
-    .attr("height", cellSize*2);
+    .attr("width", 300)
+    .attr("height", cellSize+10);
 
   var legend = key.append("defs")
     .append("svg:linearGradient")
@@ -918,26 +918,67 @@ function drawLegend(){
 
   key.append("rect")
     .classed('filled', true)
-    .attr("width", 400)
-    .attr("height", cellSize);
+    .attr("width", 200)
+    .attr("height", cellSize/3);
 
   var cuisinIngreKeyLeft = key.append('text')
     .attr('class', 'keyLeftText')
-    .text('Low usage')
+    .text('Least popular')
     .attr('x', 0)
-    .attr('y', 50);
+    .attr('y', cellSize/3 + 18);
 
   var cuisinIngreKeyRight = key.append('text')
     .attr('class', 'keyRightText')
-    .text('High usage')
-    .attr('x', 350)
-    .attr('y', 50);
+    .text('Most popular')
+    .attr('x', 150)
+    .attr('y', cellSize/3 + 18);
+}
+
+function drawLegend2(){
+  var legendContainer = d3.select('.key2').append('svg')
+    .attr('wdith', w)
+    .attr('height', 30);
+
+  var key2 = d3.select(".key2")
+    .append("svg")
+    .attr("width", 300)
+    .attr("height", cellSize+10);
+
+  var legend = key2.append("defs")
+    .append("svg:linearGradient")
+    .attr("id", "gradient");
+
+  legend.append("stop")
+    .attr('class', 'stop-left')
+  	.attr("offset", "0%");
+
+  legend.append("stop")
+    .attr('class', 'stop-right')
+  	.attr("offset", "100%");
+
+  key2.append("rect")
+    .classed('filled', true)
+    .attr("width", 200)
+    .attr("height", cellSize/3);
+
+  var cuisinIngreKeyLeft = key2.append('text')
+    .attr('class', 'keyLeftText')
+    .text('Low similarity')
+    .attr('x', 0)
+    .attr('y', cellSize/3 + 18);
+
+  var cuisinIngreKeyRight = key2.append('text')
+    .attr('class', 'keyRightText')
+    .text('High similarity')
+    .attr('x', 150)
+    .attr('y', cellSize/3 + 18);
 }
 
 function draw() {
   renderIngreCuisineMatrixPlot();
   renderCuisineSimilarityMatrixPlot();
   drawLegend();
+  drawLegend2();
 }
 
 $('.cuisineSimilarityBtn').click(function(){
@@ -948,8 +989,8 @@ $('.cuisineSimilarityBtn').click(function(){
   });
   $('.cuisineIngreContainer').css('opacity',0);
   // $('.cuisineSimilarityContainer').css('opacity',1);
-  $('.keyLeftText').text('Low similarity');
-  $('.keyRightText').text('High similarity');
+  // $('.keyLeftText').text('Low similarity');
+  // $('.keyRightText').text('High similarity');
 });
 
 $('.cuisineIngreBtn').click(function(){
@@ -960,8 +1001,8 @@ $('.cuisineIngreBtn').click(function(){
   });
   $('.cuisineIngreContainer').css('opacity',1);
   $('.cuisineSimilarityContainer').css('opacity',0);
-  $('.keyLeftText').text('Low usage');
-  $('.keyRightText').text('High usage');
+  // $('.keyLeftText').text('Most popular');
+  // $('.keyRightText').text('Least popular');
 });
 
 function parse(d){

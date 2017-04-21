@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
     <link href="style.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Griffy" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 </head>
@@ -24,14 +25,38 @@
           in the world.
           Based upon regions, cuisines may be devided to <b>Asian</b> cuisines,
           <b>European</b> cuisines, cuisines of <b>the Americas</b>
-          and <b>African</b> cuisines.
+          and <b>African</b> cuisines.</br>
+          </br>
+          In this project, we try to compare and contrast the usage of food ingredients in different
+          cuisines. We are also interested in exploring the most popular combinations
+          among ingredients in one particular cuisine.
 
-          This food ingredient pairing visualization will help audience understand the following questions:</br>
+          Since we hypothesize is that the cuisine similarity is associated with
+          region and/ or country, we also want to examine our hypothesis and to
+          explore how similar between two cuisines.</br>
+          </br>
+
+          <div class="btnDivContainer">
+            <div class="btnDivMatrix">
+              <button type="button" class="btn btn-secondary cuisineIngreBtn">Cuisine Ingredient Matrix</button>
+              shows the popularity of the food ingredient in different cuisines, and
+              what ingredient goes well with.
+              <div class="key"></div>
+            </div>
+            <div class="btnDivMatrix">
+              <button type="button" class="btn btn-secondary cuisineSimilarityBtn">Cuisine Similarity Matrix</button>
+              demonstrates the cuisine similarity.
+              <div class="key2"></div>
+            </div>
+          </div>
+
+          <!-- This food ingredient pairing visualization will help audience understand the following questions:</br>
           - What food ingredient goes well with in one particular cuisine?</br>
           - Which ingredient(s) are more popular in that cuisine?</br>
-          - What is the similarity between two cuisine?</br>
+          - What is the similarity between two cuisine?</br> -->
 
         </div>
+        <div class="divider"></div>
       </div>
     </header>
     <div class="container">
@@ -41,10 +66,10 @@
       </div>
 
       <div class="row legendRow">
-        <div class="key col-md-6"></div>
+        <!-- <div class="key col-md-6"></div> -->
         <div class="btn-group col-md-6" role="group">
-          <button type="button" class="btn btn-secondary cuisineIngreBtn">Cuisine Ingredient</button>
-          <button type="button" class="btn btn-secondary cuisineSimilarityBtn">Cuisine Similarity</button>
+          <!-- <button type="button" class="btn btn-secondary cuisineIngreBtn">Cuisine Ingredient</button> -->
+          <!-- <button type="button" class="btn btn-secondary cuisineSimilarityBtn">Cuisine Similarity</button> -->
         </div>
       </div>
 
