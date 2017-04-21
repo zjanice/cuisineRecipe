@@ -593,7 +593,7 @@ function renderIngreUsageBarPlot(cuisineA, cuisineB){
     //   return i * cellSize;
     // })
     .attr('height',15)
-    .style('fill', 'rgb(162, 191, 158)'); // green
+    .style('fill', 'rgb(125, 185, 118)'); // green
 
   //Exit
   ingredientBars.exit()
@@ -619,7 +619,7 @@ function renderIngreUsageBarPlot(cuisineA, cuisineB){
     //   return i * cellSize;
     // })
     .attr('height',15)
-    .style('fill', 'rgb(162, 191, 158)');
+    .style('fill', 'rgb(125, 185, 118)');
 
   //Exit
   ingredientBars.exit()
