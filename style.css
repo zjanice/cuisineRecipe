@@ -57,7 +57,7 @@ body{
 
 #projectIntro {
   /*padding: 3% 20% 2% 0%;*/
-  padding: 3% 12% 2% 0%;
+  padding: 3% 15% 2% 0%;
 }
 
 #plot1 svg {
@@ -237,11 +237,11 @@ body{
 }
 
 .stop-left {
-    stop-color: white;  /* Indigo */
+    stop-color: white;
   }
 
 .stop-right {
-  stop-color: #36802d;  /* Teal */
+  stop-color: #36802d;
 }
 
 .filled {
