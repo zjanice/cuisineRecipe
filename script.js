@@ -23,9 +23,10 @@ var sortedCuisines = [
     'Southwestern', 'Mexican', 'Central_SouthAmerican',
     'African', 'Moroccan'];
 
-var rectIngredientWidth = 24, rectIngredientHeight = 24;
+// var rectIngredientWidth = 24, rectIngredientHeight = 24;
+var rectIngredientWidth = 20, rectIngredientHeight = 20;
 
-var cellSize = 28, col_number= 26, row_number= 350;
+var cellSize = 24, col_number= 26, row_number= 350; //cellSize =28
 var ingredientColId, ingredientRowId, r = 10;
 
 var plots = d3.selectAll('.plot')
@@ -466,7 +467,7 @@ function renderIngreCuisineMatrixPlot() {
         return d;})
       // .style("text-anchor", "right")
       .attr('x', 15)
-      .attr('y', function(d,i){return i * cellSize +20;})
+      .attr('y', function(d,i){return i * cellSize + 40;})
       // .attr("transform", "translate(-6," + cellSize /2 + ")")
       .attr("transform", "translate("+cellSize * 5.2+ ",-6) rotate (-90)")
       .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
@@ -483,7 +484,7 @@ function renderCuisineSimilarityMatrixPlot(){
     .enter()
     .append("rect")
     .attr('class','similarityCellg')
-    .attr('transform','translate(250,0)')
+    .attr('transform','translate(200,0)')
     .attr("x", function(d,i) {
       // var colId = i % col_number;
       var colId = Math.floor(i/cuisineMatrixPlotColCount); //d.ingredient.index = d.id
@@ -536,7 +537,7 @@ function renderCuisineSimilarityMatrixPlot(){
         d = d.replace(/_/g, ' ');
         return d;})
       .attr('x', 20)
-      .attr('y', function(d,i){return i * cellSize +120;})
+      .attr('y', function(d,i){return i * cellSize + 100;})
       // .attr("transform", "translate(-6," + cellSize /2 + ")")
       .attr("transform", "translate("+cellSize * 5.2+ ",-6) rotate (-90)")
       .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
@@ -581,7 +582,6 @@ function renderIngreUsageBarPlot(cuisineA, cuisineB){
   //Update
   ingredientBars.merge(ingredientBarsEnter)
     .attr('class','ingredientUsageBarA')
-    // .attr('transform','translate()')
     .attr('transform', function(d, i) {
       return 'translate(0,'+i * cellSize+')';
     })
@@ -731,7 +731,7 @@ function renderIngreCooccurancePlot(ingreCuisinePair) {
     .append('g')
     .attr('class','rect')
     .attr('transform',function(d,i){
-      return 'translate(0,'+scaleYIngredient(i) * 1.2+')';
+      return 'translate(0,'+scaleYIngredient(i)+')';
     });
 
   var currentIngredient = d.ingredient.name;
@@ -758,7 +758,7 @@ function renderIngreCooccurancePlot(ingreCuisinePair) {
     .merge(rectIngredient)
     .transition()
     .attr('transform', function(d, i) {
-      return 'translate(0,'+scaleYIngredient(i) * 1.2+')';
+      return 'translate(0,'+scaleYIngredient(i)+')';
     });
 
   rectIngridientTransit.select('rect')

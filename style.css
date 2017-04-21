@@ -13,12 +13,12 @@ body{
 
 .divider {
   height: 1px;
-  width:70%;
+  width: 80%;
   display:block; /* for use on default inline elements like span */
   margin: 9px 0;
   overflow: hidden;
   background-color: #e5e5e5;
-  margin-left: 12%;
+  margin-left: 8%;
 }
 
 .btnDivContainer, .btnDivMatrix {
@@ -56,12 +56,14 @@ body{
 }
 
 #projectIntro {
-  padding: 3% 20% 2% 0%;
+  /*padding: 3% 20% 2% 0%;*/
+  padding: 3% 12% 2% 0%;
 }
 
 #plot1 svg {
   padding-top: 23%;
-  padding-left: 13%;
+  /*padding-left: 13%;*/
+  padding-left: 5%;
 }
 
 .canvas{
@@ -79,7 +81,9 @@ body{
   /*position: fixed;
   left: 72%;
   top: 25%;*/
-  margin-top: 9.5%;
+  /*margin-top: 9.5%;*/
+  margin-top: 8.5%;
+  padding-left: 3%;
 }
 
 .node .outer{
@@ -178,14 +182,14 @@ body{
 /*-----------plot 3 & 4--------*/
 #plot3 svg{
   padding-top: 20%;
-  padding-left: 3%;
+  /*padding-left: 3%;*/
 }
 
 #plot4 {
   /*margin-top: 9%;*/
   margin-top: 7%;
-  padding-left: 0;
-  border-left: 1px solid #eee;
+  padding-left: 5%;
+  /*border-left: 1px solid #eee;*/
 }
 
 .plot4Title{
